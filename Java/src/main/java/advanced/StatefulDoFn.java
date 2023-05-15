@@ -75,7 +75,8 @@ public class StatefulDoFn {
                             // When using StatefulDoFns be careful of not keeping the state forever and clearing it.
                             // This example is OK because we know the keys are always incoming, but if we have
                             // sparse keys, we may keep the buffer up forever (e.g., we trigger every 100 elements
-                            // but we only got 99 for that key. See TimerDoFn for an example that would fix that)
+                            // but we only got 99 for that key). Adding a Timer would fix that, see TimerDoFn
+                            // for an example.
                             private static final int MAX_BUFFER_SIZE_ENROUTE = 100000;
                             private static final int MAX_BUFFER_SIZE = 100; // Special counter for non-enroutes
 

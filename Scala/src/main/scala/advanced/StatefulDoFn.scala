@@ -44,8 +44,8 @@ object StatefulDoFn {
     // Java's GroupIntoBatches PTransfrom implements a similar logic
     // When using StatefulDoFns be careful of not keeping the state forever and clearing state. This example is OK
     // because we know the keys are always incoming, but if we have  sparse keys, we may keep the buffer up forever
-    // (e.g., we trigger every 100 elements but we only got 99 for that key. See TimerDoFn for an example that
-    // would fix that)
+    // (e.g., we trigger every 100 elements but we only got 99 for that key. Adding a Timer would fix that,
+     // see TimerDoFn for an example.
     private val BUFFER_SIZE: Map[String, Int] = Map("enroute" -> 100000, "dropoff" -> 100, "pickup" -> 100)
 
     @StateId("count") private val countState = StateSpecs.value[JInt]()
