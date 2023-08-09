@@ -48,7 +48,7 @@
     <flink.artifact.name>beam-runners-flink-1.10</flink.artifact.name>
 
     <avro.version>1.10.0</avro.version>
-    <json.version>20200518</json.version>
+    <json.version>20230227</json.version>
     <google-auto-service.version>1.0-rc7</google-auto-service.version>
 
   </properties>
