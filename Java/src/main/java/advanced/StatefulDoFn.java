@@ -16,6 +16,10 @@
 
 package advanced;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
+
+import java.text.ParseException;
+import java.time.Instant;
 import org.apache.beam.runners.dataflow.options.DataflowPipelineOptions;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
@@ -32,11 +36,6 @@ import org.apache.beam.sdk.values.KV;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.text.ParseException;
-import java.time.Instant;
-
-import static org.apache.beam.vendor.guava.v26_0_jre.com.google.common.base.MoreObjects.firstNonNull;
 
 public class StatefulDoFn {
 

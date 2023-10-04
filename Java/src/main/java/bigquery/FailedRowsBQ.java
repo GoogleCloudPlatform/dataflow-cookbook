@@ -16,6 +16,10 @@
 
 package bigquery;
 import com.google.api.services.bigquery.model.*;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO;
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryInsertError;
@@ -31,11 +35,6 @@ import org.apache.beam.sdk.transforms.ParDo;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class FailedRowsBQ {
 
@@ -106,9 +105,9 @@ public class FailedRowsBQ {
                         TableRow row = c.element().getRow();
                         TableDataInsertAllResponse.InsertErrors error = c.element().getError();
                         TableReference table = c.element().getTable();
-                        LOG.error("Failed to write row " + row.toString()
+                        LOG.error("Failed to write row " + row
                                 + ".\n Table " + table.getDatasetId() + "." + table.getTableId()
-                                + ".\n Error: " + error.toString()
+                                + ".\n Error: " + error
                         );
 
                         // Output TableRow

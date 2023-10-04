@@ -131,7 +131,7 @@ public class WithLateAndEarlyFirings {
                 .apply("Log", ParDo.of(new DoFn<KV<String, Iterable<String>>, String>() {
                     @ProcessElement
                     public void processElement(ProcessContext c) {
-                        LOG.info("\n TRIGGER " + c.element().getValue() + "\n" + c.pane().toString());
+                        LOG.info("\n TRIGGER " + c.element().getValue() + "\n" + c.pane());
                         c.output(c.pane().toString());
                     }
                 }));

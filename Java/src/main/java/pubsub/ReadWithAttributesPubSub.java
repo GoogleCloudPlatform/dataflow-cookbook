@@ -56,7 +56,7 @@ public class ReadWithAttributesPubSub {
                                 PubsubMessage message = c.element();
                                 // This log may overload the quota, comment if needed
                                 String payload = new String(message.getPayload());
-                                LOG.info("Element timestamp is " + c.timestamp().toString() +
+                                LOG.info("Element timestamp is " + c.timestamp() +
                                         " and timestamp attribute is " + message.getAttribute("timestamp") + // both should match
                                         ". Message ID " + message.getMessageId() +
                                         ". Actual message \"" + payload + "\"");

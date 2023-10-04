@@ -16,6 +16,8 @@
 
 package advanced;
 
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.coders.Coder;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
@@ -34,9 +36,6 @@ import org.joda.time.Instant;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.Collection;
 
 public class CustomWindows {
 
@@ -66,7 +65,7 @@ public class CustomWindows {
             Instant start = new Instant(
                     timestamp.getMillis() - timestamp.plus(size).getMillis() % size.getMillis());
             Instant end = start.plus(size);
-            return Arrays.asList(new IntervalWindow(start, end));
+            return Collections.singletonList(new IntervalWindow(start, end));
         }
 
         // Mandatory methods

@@ -16,6 +16,10 @@
 
 package bigquery;
 import com.google.api.services.bigquery.model.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO;
 import org.apache.beam.sdk.options.Description;
@@ -26,10 +30,6 @@ import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class WritePartitionedClusteredTableBQ {
     private static final Logger LOG = LoggerFactory.getLogger(WriteBQ.class);
@@ -74,7 +74,7 @@ public class WritePartitionedClusteredTableBQ {
 
         // Clustering
         Clustering clustering = new Clustering();
-        clustering.setFields(Arrays.asList("country"));
+        clustering.setFields(Collections.singletonList("country"));
 
         p
                 .apply(Create.of(elements))
@@ -96,7 +96,7 @@ public class WritePartitionedClusteredTableBQ {
                 // to BigQuery
                 // Using `writeTableRows` is slightly less performant than using write with `WithFormatFunction`
                 // due to the TableRow encoding. See `WriteWithFormatBQ` for an example.
-                .apply(BigQueryIO.<TableRow>writeTableRows() // Input type from prev stage is TableRow
+                .apply(BigQueryIO.writeTableRows() // Input type from prev stage is TableRow
                         .withSchema(schema)
                         .to(options.getTable())
                         .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
