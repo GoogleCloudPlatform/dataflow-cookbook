@@ -27,7 +27,7 @@
   <packaging>jar</packaging>
 
   <properties>
-    <beam.version>2.50.0</beam.version>
+    <beam.version>2.51.0</beam.version>
 
     <bigquery.version>v2-rev20200719-1.30.10</bigquery.version>
     <hamcrest.version>2.1</hamcrest.version>
