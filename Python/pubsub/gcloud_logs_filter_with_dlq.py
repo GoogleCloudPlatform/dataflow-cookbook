@@ -44,15 +44,15 @@ def run():
         def _add_argparse_args(cls, parser):
             parser.add_argument(
                 "--input_topic",
-                default="projects/apache-beam-testing/topics/vterentev-input-test",
+                default="projects/apache-beam-testing/topics/your-input-test",
                 help="Input PubSub topic")
             parser.add_argument(
                 "--output_topic",
-                default="projects/apache-beam-testing/topics/vterentev-output-test",
+                default="projects/apache-beam-testing/topics/your-output-test",
                 help="Output PubSub topic")
             parser.add_argument(
                 "--dlq_topic",
-                default="projects/apache-beam-testing/topics/vterentev-dlq-test",
+                default="projects/apache-beam-testing/topics/your-dlq-test",
                 help="Dead Letter Queue PubSub topic")
 
     options = PubSubOptions(streaming=True)
