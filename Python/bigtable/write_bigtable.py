@@ -6,6 +6,7 @@ from apache_beam import Map
 from apache_beam.io.gcp.bigtableio import WriteToBigTable
 from apache_beam.options.pipeline_options import PipelineOptions
 
+
 def run():
     """
     This Apache Beam pipeline transforms and writes sample data into Google Cloud Bigtable table.
@@ -57,6 +58,7 @@ def run():
             table_id=options.table_id)
          )
 
+
 def make_bigtable_row(element):
     from google.cloud.bigtable.row import DirectRow
     from datetime import datetime
@@ -74,6 +76,7 @@ def make_bigtable_row(element):
             value,
             datetime.now())
     return direct_row
+
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)

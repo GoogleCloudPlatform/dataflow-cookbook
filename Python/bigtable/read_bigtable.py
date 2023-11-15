@@ -5,6 +5,7 @@ from apache_beam import Map
 from apache_beam.io.gcp.bigtableio import ReadFromBigtable
 from apache_beam.options.pipeline_options import PipelineOptions
 
+
 def run():
     """
     This Apache Beam pipeline retrieves data from Google Cloud Bigtable table.
@@ -46,6 +47,7 @@ def run():
                  )
                     | "Extract cells" >> beam.Map(lambda row: row._cells)
                     | "Log Data" >> Map(logging.info))
+
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
