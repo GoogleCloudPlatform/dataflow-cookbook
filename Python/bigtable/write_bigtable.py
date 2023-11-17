@@ -1,3 +1,17 @@
+#  Copyright 2023 Google LLC
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 import logging
 import apache_beam as beam
 
@@ -7,35 +21,30 @@ from apache_beam.io.gcp.bigtableio import WriteToBigTable
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
+class BigtableOptions(PipelineOptions):
+    @classmethod
+    def _add_argparse_args(cls, parser):
+        parser.add_argument(
+            '--project_id',
+            required=True,
+            help='Project ID'
+        )
+        parser.add_argument(
+            '--instance_id',
+            default="beam-test",
+            help='Cloud Bigtable instance ID'
+        )
+        parser.add_argument(
+            '--table_id',
+            default="your-test-table",
+            help='Cloud Bigtable table ID'
+        )
+
+
 def run():
     """
-    This Apache Beam pipeline transforms and writes sample data into Google Cloud Bigtable table.
-    It performs the following steps:
-    1. Input Data Generation:
-        - Simulated data is created as a sample input dataset.
-    2. Data Transformation to Bigtable Rows:
-        - Each input element is converted into a Bigtable DirectRow format.
-    3. Writing to Bigtable:
-        - The transformed Bigtable rows are written to a specified Bigtable instance and table.
+    This pipeline shows how to write to Cloud Bigtable.
     """
-    class BigtableOptions(PipelineOptions):
-        @classmethod
-        def _add_argparse_args(cls, parser):
-            parser.add_argument(
-                '--project_id',
-                default="apache-beam-testing",
-                help='Output project ID'
-            )
-            parser.add_argument(
-                '--instance_id',
-                default="beam-test",
-                help='Output Bigtable instance ID'
-            )
-            parser.add_argument(
-                '--table_id',
-                default="your-test-table",
-                help='Output Bigtable table ID'
-            )
 
     options = BigtableOptions()
 
