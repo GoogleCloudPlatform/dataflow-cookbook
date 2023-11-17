@@ -1,3 +1,17 @@
+#  Copyright 2023 Google LLC
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 import logging
 import json
 
@@ -9,6 +23,25 @@ from apache_beam import ParDo
 from apache_beam.io import ReadFromPubSub
 from apache_beam.io import WriteToPubSub
 from apache_beam.options.pipeline_options import PipelineOptions
+
+
+class PubSubOptions(PipelineOptions):
+
+    @classmethod
+    def _add_argparse_args(cls, parser):
+        parser.add_argument(
+            "--input_topic",
+            default="projects/your-project/topics/your-input-test",
+            help="Input PubSub topic")
+        parser.add_argument(
+            "--output_topic",
+            default="projects/your-project/topics/your-output-test",
+            help="Output PubSub topic")
+        parser.add_argument(
+            "--dlq_topic",
+            default="projects/your-project/topics/your-dlq-test",
+            help="Dead Letter Queue PubSub topic")
+
 
 def run():
     """
@@ -38,22 +71,6 @@ def run():
         - Writes transformed 'processed' messages to a specified output Pub/Sub topic.
         - Sends 'unprocessed' messages to a Dead Letter Queue (DLQ) topic.
     """
-    class PubSubOptions(PipelineOptions):
-
-        @classmethod
-        def _add_argparse_args(cls, parser):
-            parser.add_argument(
-                "--input_topic",
-                default="projects/apache-beam-testing/topics/your-input-test",
-                help="Input PubSub topic")
-            parser.add_argument(
-                "--output_topic",
-                default="projects/apache-beam-testing/topics/your-output-test",
-                help="Output PubSub topic")
-            parser.add_argument(
-                "--dlq_topic",
-                default="projects/apache-beam-testing/topics/your-dlq-test",
-                help="Dead Letter Queue PubSub topic")
 
     options = PubSubOptions(streaming=True)
 
@@ -73,6 +90,7 @@ def run():
          | "Map to PubsubMessage" >> Map(to_pubsub_message)
          | "Write to DLQ" >> WriteToPubSub(options.dlq_topic, with_attributes=True))
 
+
 class SplitMessages(DoFn):
     def process(self, element):
         from apache_beam.pvalue import TaggedOutput
@@ -82,14 +100,17 @@ class SplitMessages(DoFn):
         else:
             yield TaggedOutput('unprocessed', element)
 
+
 def filter_by_severity(log):
-    # Filter logs by severity level (e.g., only process logs with severity "ERROR")
+    # Filter logs by severity level (only process logs with severity "ERROR")
     return log.get("severity").upper() == "ERROR"
+
 
 def to_pubsub_message(msg):
     from apache_beam.io import PubsubMessage
 
     return PubsubMessage(data=bytes(json.dumps(msg), "utf-8"), attributes=None)
+
 
 def transform_data(log):
     from apache_beam.io import PubsubMessage
@@ -101,6 +122,7 @@ def transform_data(log):
     }
     data = bytes(f"Error log message: {transformed_data['message']} [{transformed_data['timestamp']}]", "utf-8")
     return PubsubMessage(data=data, attributes=transformed_data)
+
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
