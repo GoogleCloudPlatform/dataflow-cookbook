@@ -341,6 +341,12 @@
       <artifactId>beam-sdks-java-io-google-cloud-platform</artifactId>
     </dependency>
 
+    <!-- Adds a dependency on the Avro extensions -->
+    <dependency>
+      <groupId>org.apache.beam</groupId>
+      <artifactId>beam-sdks-java-extensions-avro</artifactId>
+    </dependency>
+
     <!-- Dependencies below this line are specific dependencies needed by the examples code. -->
     <dependency>
       <groupId>com.google.api-client</groupId>
