@@ -68,6 +68,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *pubsub*
 
+- *spanner*
+
 - *tfrecord*
 
 - *windows*: example pipelines of the four windows
