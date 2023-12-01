@@ -24,12 +24,17 @@ from apache_beam.transforms.combiners import Count
 
 def run(argv=None):
 
+  # Define the text file GCS locations.
+  # You should replace these locations with the paths to your text files.
   elements = ["gs://apache-beam-samples/shakespeare/kinglear.txt",
               "gs://apache-beam-samples/shakespeare/macbeth.txt",
               "gs://apache-beam-samples/shakespeare/a*"]
 
   options = PipelineOptions()
 
+  # ReadAllFromText reads the files from elements
+  #  and parse each file as newline-delimited elements
+  # At last, Count. globally() counts the total number of lines for all files
   with beam.Pipeline(options=options) as p:
 
     (p | Create(elements)
