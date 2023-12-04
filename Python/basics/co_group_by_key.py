@@ -21,6 +21,7 @@ from apache_beam import Map
 
 
 def run(argv=None):
+  # Define the input key-value pairs.
   jobs = [
       ("Anna", "SWE"),
       ("Kim", "Data Engineer"),
@@ -37,11 +38,14 @@ def run(argv=None):
       ("Sophia", "Tennis")
   ]
 
+  # Create two PCollections with beam.Create().
+  # Use beam.CoGroupByKey() to group elements from these two PCollections
+  # by their key.
   with beam.Pipeline() as p:
     jobs_pcol = p | "Create Jobs" >> Create(jobs)
     hobbies_pcol = p | "Create Hobbies" >> Create(hobbies)
-    output = ((jobs_pcol,hobbies_pcol) | "CoGroupByKey" >> CoGroupByKey()
-                                       | "Log" >> Map(logging.info))
+    output = ((jobs_pcol, hobbies_pcol) | "CoGroupByKey" >> CoGroupByKey()
+                                        | "Log" >> Map(logging.info))
 
 
 if __name__ == "__main__":
