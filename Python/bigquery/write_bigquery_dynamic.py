@@ -61,7 +61,7 @@ def run(argv=None):
           required=True,
           help="BQ Table destination")
 
-  # the BigQuery table schema
+  # define the BigQuery table schema
   table_schema = "name:STRING, year:INTEGER, country:STRING"
 
   options = WriteBigQueryOptions()
