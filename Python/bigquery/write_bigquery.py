@@ -22,6 +22,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def make_row(element):
+  """Parse element to create a row using Dict
+  """
   row_fields = element.split(", ")
   return {
       "name": row_fields[0],
@@ -46,9 +48,14 @@ def run(argv=None):
     def _add_argparse_args(cls, parser):
       parser.add_argument(
           "--output_table",
+          required=True,
           help="BQ Table to write")
+
+  # define the BigQuery table schema
   table_schema = "name:STRING, year:INTEGER, country:STRING"
   options = WriteBigQueryOptions()
+
+  # run the pipeline to write data into a BigQuery table
   with beam.Pipeline(options=options) as p:
     output = (p | Create(elements)
                 | Map(make_row)
