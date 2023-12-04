@@ -64,6 +64,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *pubsub*
 
+- *tfrecord*
+
 - *windows*: example pipelines of the four windows
 
 - *testing_windows*: pipelines that, using the way to test windows, explain how
