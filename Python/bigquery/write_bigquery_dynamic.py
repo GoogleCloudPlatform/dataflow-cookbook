@@ -23,6 +23,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def make_row(element):
+  """Parse element to create a row using Dict
+  """
   row_fields = element.split(", ")
   return {
       "name": row_fields[0],
@@ -32,6 +34,8 @@ def make_row(element):
 
 
 def table_fn(element, base_table):
+  """Select the table name based on the input data
+  """
   if element["year"] > 1997:
     return base_table + "after"
   else:
@@ -54,12 +58,16 @@ def run(argv=None):
     def _add_argparse_args(cls, parser):
       parser.add_argument(
           "--output_table",
+          required=True,
           help="BQ Table destination")
 
+  # define the BigQuery table schema
   table_schema = "name:STRING, year:INTEGER, country:STRING"
 
   options = WriteBigQueryOptions()
   base_table = options.output_table
+
+  # run the pipeline to write data into different BigQuery table
   with beam.Pipeline(options=options) as p:
     output = (p | Create(elements)
                 | Map(make_row)
