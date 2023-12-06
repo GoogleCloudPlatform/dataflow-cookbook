@@ -94,6 +94,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *bigquery*
 
+- *file*
+
 - *pubsub*
 
 - *windows*: example pipelines of the four windows
