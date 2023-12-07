@@ -12,36 +12,37 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import DoFn
-from apache_beam import Map
-from apache_beam import ParDo
+from apache_beam import Create, DoFn, Map, ParDo
 
 
 # ParDo allows 1 to Many outputs while Map only allows 1 to 1 outputs.
 class SplitFn(DoFn):
-
-  def process(self, element):
-    return element.split()
+    def process(self, element):
+        return element.split()
 
 
 def run(argv=None):
-  elements = [
-      "Lorem ipsum dolor sit amet. Consectetur adipiscing elit",
-      "Sed eu velit nec sem vulputate loborti",
-      "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non ",
-      "Ut blandit massa et risus sollicitudin auctor"]
+    elements = [
+        "Lorem ipsum dolor sit amet. Consectetur adipiscing elit",
+        "Sed eu velit nec sem vulputate loborti",
+        "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non ",
+        "Ut blandit massa et risus sollicitudin auctor",
+    ]
 
-  with beam.Pipeline() as p:
-    output = (p | Create(elements)
-                | "Split Output" >> ParDo(SplitFn())
-                | "Log"
- >> Map(logging.info))
+    with beam.Pipeline() as p:
+        output = (
+            p
+            | Create(elements)
+            | "Split Output" >> ParDo(SplitFn())
+            | "Log" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

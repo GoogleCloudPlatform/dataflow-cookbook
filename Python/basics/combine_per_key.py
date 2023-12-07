@@ -12,32 +12,47 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import CombinePerKey
-from apache_beam import Create
-from apache_beam import Map
+from apache_beam import CombinePerKey, Create, Map
 
 
 def run(argv=None):
-  elements = [
-      ("Latin", "Lorem ipsum dolor sit amet. Consectetur adipiscing elit. Sed eu velit nec sem vulputate loborti"),
-      ("Latin", "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum"),
-      ("English", "From fairest creatures we desire increase"),
-      ("English", "That thereby beauty's rose might never die"),
-      ("English", "But as the riper should by time decease"),
-      ("Spanish", "En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho"),
-      ("Spanish", "tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua")
-  ]
+    elements = [
+        (
+            "Latin",
+            "Lorem ipsum dolor sit amet. Consectetur adipiscing elit. Sed eu velit nec sem vulputate loborti",
+        ),
+        (
+            "Latin",
+            "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum",
+        ),
+        ("English", "From fairest creatures we desire increase"),
+        ("English", "That thereby beauty's rose might never die"),
+        ("English", "But as the riper should by time decease"),
+        (
+            "Spanish",
+            "En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho",
+        ),
+        (
+            "Spanish",
+            "tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua",
+        ),
+    ]
 
-  with beam.Pipeline() as p:
-    output = (p | Create(elements)
-                | "Join per key with full stop" >> CombinePerKey(lambda x: ". ".join(x))
-                | "Log"
- >> Map(logging.info))
+    with beam.Pipeline() as p:
+        output = (
+            p
+            | Create(elements)
+            | "Join per key with full stop"
+            >> CombinePerKey(lambda x: ". ".join(x))
+            | "Log" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

@@ -12,38 +12,41 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import CoGroupByKey
-from apache_beam import Create
-from apache_beam import Map
+from apache_beam import CoGroupByKey, Create, Map
 
 
 def run(argv=None):
-  jobs = [
-      ("Anna", "SWE"),
-      ("Kim", "Data Engineer"),
-      ("Kim", "Data Scientist"),
-      ("Robert", "Artist"),
-      ("Sophia", "CEO")
-  ]
-  hobbies = [
-      ("Anna", "Painting"),
-      ("Kim", "Football"),
-      ("Kim", "Gardening"),
-      ("Robert", "Swimming"),
-      ("Sophia", "Mathematics"),
-      ("Sophia", "Tennis")
-  ]
+    jobs = [
+        ("Anna", "SWE"),
+        ("Kim", "Data Engineer"),
+        ("Kim", "Data Scientist"),
+        ("Robert", "Artist"),
+        ("Sophia", "CEO"),
+    ]
+    hobbies = [
+        ("Anna", "Painting"),
+        ("Kim", "Football"),
+        ("Kim", "Gardening"),
+        ("Robert", "Swimming"),
+        ("Sophia", "Mathematics"),
+        ("Sophia", "Tennis"),
+    ]
 
-  with beam.Pipeline() as p:
-    jobs_pcol = (p | "Create Jobs" >> Create(jobs))
-    hobbies_pcol = (p | "Create Hobbies" >> Create(hobbies))
-    output = ({"Jobs": jobs_pcol, "Hobbies": hobbies_pcol} | CoGroupByKey()
-                                                           | "Log" >> Map(logging.info))
+    with beam.Pipeline() as p:
+        jobs_pcol = p | "Create Jobs" >> Create(jobs)
+        hobbies_pcol = p | "Create Hobbies" >> Create(hobbies)
+        output = (
+            {"Jobs": jobs_pcol, "Hobbies": hobbies_pcol}
+            | CoGroupByKey()
+            | "Log" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

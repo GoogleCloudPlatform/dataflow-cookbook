@@ -15,8 +15,10 @@
 
 # https://beam.apache.org/releases/pydoc/2.31.0/apache_beam.io.gcp.pubsub.html
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io import ReadFromPubSub
@@ -24,27 +26,32 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run():
-  class ReadPubSubOptions(PipelineOptions):
+    class ReadPubSubOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            parser.add_argument(
+                "--topic",
+                required=True,
+                help="PubSub topic with attributes to read.",
+            )
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          "--topic",
-          required=True,
-          help="PubSub topic with attributes to read.")
+    options = ReadPubSubOptions(streaming=True)
 
-  options = ReadPubSubOptions(streaming=True)
-
-  with beam.Pipeline(options=options) as p:
-
-    (p | "Read PubSub topic" >> ReadFromPubSub(topic=options.topic, with_attributes=True)
-       | "Message" >> Map(lambda msg:
-                          f"PubSub message:\n"
-                          f"Data: {msg.data}\n"
-                          f"Attributes: {msg.attributes}\n")
-       | Map(logging.info))
+    with beam.Pipeline(options=options) as p:
+        (
+            p
+            | "Read PubSub topic"
+            >> ReadFromPubSub(topic=options.topic, with_attributes=True)
+            | "Message"
+            >> Map(
+                lambda msg: f"PubSub message:\n"
+                f"Data: {msg.data}\n"
+                f"Attributes: {msg.attributes}\n"
+            )
+            | Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

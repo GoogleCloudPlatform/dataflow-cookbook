@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io import ReadFromPubSub
@@ -21,27 +23,30 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run():
-  """Run PubSub subscription read function."""
+    """Run PubSub subscription read function."""
 
-  class ReadPubSubOptions(PipelineOptions):
+    class ReadPubSubOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            parser.add_argument(
+                "--subscription",
+                required=True,
+                help="PubSub subscription to read.",
+            )
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          "--subscription",
-          required=True,
-          help="PubSub subscription to read.")
+    options = ReadPubSubOptions(streaming=True)
 
-  options = ReadPubSubOptions(streaming=True)
-
-  with beam.Pipeline(options=options) as p:
-
-    (p | "Read PubSub subscription" >> ReadFromPubSub(subscription=options.subscription)
-       | "Message" >> Map(lambda msg: f"PubSub message:\n{msg}\n")
-       | Map(logging.info))
+    with beam.Pipeline(options=options) as p:
+        (
+            p
+            | "Read PubSub subscription"
+            >> ReadFromPubSub(subscription=options.subscription)
+            | "Message" >> Map(lambda msg: f"PubSub message:\n{msg}\n")
+            | Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  logging.info("Exit with Ctrl+C.")
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    logging.info("Exit with Ctrl+C.")
+    run()

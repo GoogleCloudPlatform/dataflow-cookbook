@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io.fileio import MatchContinuously
@@ -22,33 +24,29 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run(argv=None):
+    class MatchContinuouslyOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            parser.add_argument(
+                "--pattern", help="Pattern to check for new files"
+            )
 
-  class MatchContinuouslyOptions(PipelineOptions):
+            parser.add_argument(
+                "--interval", default=300, help="Frequency to look for files"
+            )
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          '--pattern',
-          help='Pattern to check for new files'
-      )
+    options = MatchContinuouslyOptions(streaming=True)
 
-      parser.add_argument(
-          '--interval',
-          default=300,
-          help='Frequency to look for files'
+    with beam.Pipeline(options=options) as p:
+        (
+            p
+            | MatchContinuously(options.pattern, interval=options.interval)
+            | Map(lambda x: x.path)
+            | ReadAllFromText()
+            | Map(logging.info)
         )
-
-  options = MatchContinuouslyOptions(streaming=True)
-
-  with beam.Pipeline(options=options) as p:
-
-    (p | MatchContinuously(options.pattern, interval=options.interval)
-       | Map(lambda x: x.path)
-       | ReadAllFromText()
-       | Map(logging.info)
-     )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

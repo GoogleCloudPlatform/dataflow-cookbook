@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io.parquetio import ReadFromParquet
@@ -21,25 +23,29 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run(argv=None):
+    class ReadParquetOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            parser.add_argument(
+                "--path",
+                default="gs://cloud-samples-data/bigquery/us-states/*.parquet",
+                help="GCS path to read from",
+            )
 
-  class ReadParquetOptions(PipelineOptions):
+    options = ReadParquetOptions()
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          "--path",
-          default="gs://cloud-samples-data/bigquery/us-states/*.parquet",
-          help="GCS path to read from")
-
-  options = ReadParquetOptions()
-
-  with beam.Pipeline(options=options) as p:
-
-    (p | "ReadParquet" >> ReadFromParquet(options.path)
-       | "CheckRow" >> Map(lambda row: f"The abbreviation of {row['name']} is {row['post_abbr']}")
-       | Map(logging.info))
+    with beam.Pipeline(options=options) as p:
+        (
+            p
+            | "ReadParquet" >> ReadFromParquet(options.path)
+            | "CheckRow"
+            >> Map(
+                lambda row: f"The abbreviation of {row['name']} is {row['post_abbr']}"
+            )
+            | Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

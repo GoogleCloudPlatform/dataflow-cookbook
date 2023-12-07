@@ -12,28 +12,33 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
+from apache_beam import Create, Map
 
 
 def double_number(x):
-  y = x * 2
-  logging.info("double value %f" %y)
-  return y
+    y = x * 2
+    logging.info("double value %f" % y)
+    return y
 
 
 def run(argv=None):
-  n = 10
-  with beam.Pipeline() as p:
-    # Map can be used with lambda or defined function.
-    output = (p | "Input" >> Create(range(n))
-                | "Doubles" >> Map(double_number)
-                | "Squares" >> Map(lambda x: x**2)
-                | "Lambda" >> Map(logging.info))
+    n = 10
+    with beam.Pipeline() as p:
+        # Map can be used with lambda or defined function.
+        output = (
+            p
+            | "Input" >> Create(range(n))
+            | "Doubles" >> Map(double_number)
+            | "Squares" >> Map(lambda x: x**2)
+            | "Lambda" >> Map(logging.info)
+        )
+
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

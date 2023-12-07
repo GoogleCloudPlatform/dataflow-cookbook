@@ -12,34 +12,32 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
+from apache_beam import Create, Map
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run(argv=None):
+    class CreateOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            parser.add_argument(
+                "--max_n",
+                help="Upper bound for range in Create",
+                default=10,
+                type=int,
+            )
 
-  class CreateOptions(PipelineOptions):
+    options = CreateOptions()
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          '--max_n',
-          help='Upper bound for range in Create',
-          default=10,
-          type=int)
-
-  options = CreateOptions()
-
-  with beam.Pipeline(options=options) as p:
-
-    (p | Create(range(options.max_n))
-       | 'Map' >> Map(lambda x: x))
+    with beam.Pipeline(options=options) as p:
+        (p | Create(range(options.max_n)) | "Map" >> Map(lambda x: x))
 
 
-if __name__ == '__main__':
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.INFO)
+    run()

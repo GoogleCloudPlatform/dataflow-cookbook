@@ -12,38 +12,40 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import DoFn
-from apache_beam import ParDo
+from apache_beam import Create, DoFn, ParDo
 from apache_beam.io.filesystems import FileSystems
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
 class WriteFileSystems(DoFn):
-
-  def process(self, element):
-    writer = FileSystems.create(element[0])
-    writer.write(bytes(element[1], encoding="utf8"))
-    writer.close()
+    def process(self, element):
+        writer = FileSystems.create(element[0])
+        writer.write(bytes(element[1], encoding="utf8"))
+        writer.close()
 
 
 def run(argv=None):
-  # TODO: add your bucket names
-  bucket1 = ""
-  bucket2 = ""
-  elements = [
-      ("gs://" + bucket1 + "/beam/dynamic.txt", "line"),
-      ("gs://" + bucket2 + "/beam/dynamic.txt", "line")
-  ]
-  options = PipelineOptions(save_main_session=True)
-  with beam.Pipeline(options=options) as p:
-    output = (p | Create(elements)
-                | "Write FileSystems" >> ParDo(WriteFileSystems()))
+    # TODO: add your bucket names
+    bucket1 = ""
+    bucket2 = ""
+    elements = [
+        ("gs://" + bucket1 + "/beam/dynamic.txt", "line"),
+        ("gs://" + bucket2 + "/beam/dynamic.txt", "line"),
+    ]
+    options = PipelineOptions(save_main_session=True)
+    with beam.Pipeline(options=options) as p:
+        output = (
+            p
+            | Create(elements)
+            | "Write FileSystems" >> ParDo(WriteFileSystems())
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()
