@@ -11,59 +11,62 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the spe
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
-from apache_beam.io.gcp.bigquery import BigQueryDisposition
-from apache_beam.io.gcp.bigquery import WriteToBigQuery
+from apache_beam import Create, Map
+from apache_beam.io.gcp.bigquery import BigQueryDisposition, WriteToBigQuery
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def make_row(element):
-  """Parse element to create a row using Dict
-  """
-  row_fields = element.split(", ")
-  return {
-      "name": row_fields[0],
-      "year": int(row_fields[1]),
-      "country": row_fields[2]
-  }
+    """Parse element to create a row using Dict"""
+    row_fields = element.split(", ")
+    return {
+        "name": row_fields[0],
+        "year": int(row_fields[1]),
+        "country": row_fields[2],
+    }
 
 
 def run(argv=None):
-  elements = [
-      "Charles, 1995, USA",
-      "Alice, 1997, Spain",
-      "Bob, 1995, USA",
-      "Amanda, 1991, France",
-      "Alex, 1999, Mexico",
-      "Eliza, 2000, Japan"
-  ]
+    elements = [
+        "Charles, 1995, USA",
+        "Alice, 1997, Spain",
+        "Bob, 1995, USA",
+        "Amanda, 1991, France",
+        "Alex, 1999, Mexico",
+        "Eliza, 2000, Japan",
+    ]
 
-  class WriteBigQueryOptions(PipelineOptions):
+    class WriteBigQueryOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            parser.add_argument(
+                "--output_table", required=True, help="BQ Table to write"
+            )
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          "--output_table",
-          required=True,
-          help="BQ Table to write")
+    # define the BigQuery table schema
+    table_schema = "name:STRING, year:INTEGER, country:STRING"
+    options = WriteBigQueryOptions()
 
-  # define the BigQuery table schema
-  table_schema = "name:STRING, year:INTEGER, country:STRING"
-  options = WriteBigQueryOptions()
+    # run the pipeline to write data into a BigQuery table
+    with beam.Pipeline(options=options) as p:
+        output = (
+            p
+            | Create(elements)
+            | Map(make_row)
+            | WriteToBigQuery(
+                options.output_table,
+                schema=table_schema,
+                write_disposition=BigQueryDisposition.WRITE_TRUNCATE,
+                create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
+            )
+        )
 
-  # run the pipeline to write data into a BigQuery table
-  with beam.Pipeline(options=options) as p:
-    output = (p | Create(elements)
-                | Map(make_row)
-                | WriteToBigQuery(options.output_table,
-                                  schema=table_schema,
-                                  write_disposition=BigQueryDisposition.WRITE_TRUNCATE,
-                                  create_disposition=BigQueryDisposition.CREATE_IF_NEEDED))
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

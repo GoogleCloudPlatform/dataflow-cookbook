@@ -72,6 +72,3 @@ clean-lite: ## Remove pycache files, pytest files, etc
 clean: clean-lite ## Remove virtual environment, downloaded models, etc
 	@rm -rf venv
 	@echo "run 'make init'"
-
-test: lint ## Run tests
-	@./venv/bin/pytest -s -vv testing_windows

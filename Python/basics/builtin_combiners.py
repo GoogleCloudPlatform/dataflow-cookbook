@@ -12,14 +12,13 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
-from apache_beam.transforms.combiners import Count
-from apache_beam.transforms.combiners import Mean
-from apache_beam.transforms.combiners import Top
+from apache_beam import Create, Map
+from apache_beam.transforms.combiners import Count, Mean, Top
 
 """
 
@@ -27,33 +26,39 @@ Full list of combiners
 https://beam.apache.org/releases/pydoc/current/apache_beam.transforms.combiners.html
 """
 
+
 def run(argv=None):
-  elements = [
-      ("Mammal", "Dog"),
-      ("Mammal", "Cat"),
-      ("Fish", "Salmon"),
-      ("Amphibian", "Snake"),
-      ("Bird", "Eagle"),
-      ("Bird", "Owl"),
-      ("Mammal", "Algo")
-  ]
+    elements = [
+        ("Mammal", "Dog"),
+        ("Mammal", "Cat"),
+        ("Fish", "Salmon"),
+        ("Amphibian", "Snake"),
+        ("Bird", "Eagle"),
+        ("Bird", "Owl"),
+        ("Mammal", "Algo"),
+    ]
 
-  with beam.Pipeline() as p:
-    # Counters Globally and PerKey
-    input_pcol = p | Create(elements)
-    element_count_total = (input_pcol | "Global Count" >> Count.Globally()
-                                      | "Global Log" >> Map(logging.info))
-    element_count_grouped = (input_pcol | "Count PerKey" >> Count.PerKey()
-                                        | "PerKey Log" >> Map(logging.info))
-    # Mean and Top
-    numbers = p | "Create Numbers" >> Create(range(100))
+    with beam.Pipeline() as p:
+        # Counters Globally and PerKey
+        input_pcol = p | Create(elements)
+        element_count_total = (
+            input_pcol
+            | "Global Count" >> Count.Globally()
+            | "Global Log" >> Map(logging.info)
+        )
+        element_count_grouped = (
+            input_pcol
+            | "Count PerKey" >> Count.PerKey()
+            | "PerKey Log" >> Map(logging.info)
+        )
+        # Mean and Top
+        numbers = p | "Create Numbers" >> Create(range(100))
 
-    mean = (numbers | Mean.Globally()
-                    | "Mean Log" >> Map(logging.info))
+        mean = numbers | Mean.Globally() | "Mean Log" >> Map(logging.info)
 
-    top = (numbers | Top.Of(5)
-                   | "Top Log" >> Map(logging.info))
+        top = numbers | Top.Of(5) | "Top Log" >> Map(logging.info)
+
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

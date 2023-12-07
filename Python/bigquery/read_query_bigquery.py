@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io import ReadFromBigQuery
@@ -21,25 +23,29 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 class ReadQueryOptions(PipelineOptions):
-
     @classmethod
     def _add_argparse_args(cls, parser):
         parser.add_argument(
             "--query",
             default=(
                 "SELECT repository_language, COUNT(repository_language) totalRepos"
-                " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1"),
-            help="BigQuery query to read data")
+                " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1"
+            ),
+            help="BigQuery query to read data",
+        )
 
 
 def run(argv=None):
-  options = ReadQueryOptions()
-  with beam.Pipeline(options=options) as p:
-    output = (p | "ReadFromQuery" >> ReadFromBigQuery(query=options.query,
-                                                      use_standard_sql=True)
-                | "LogData" >> Map(logging.info)
-              )
+    options = ReadQueryOptions()
+    with beam.Pipeline(options=options) as p:
+        output = (
+            p
+            | "ReadFromQuery"
+            >> ReadFromBigQuery(query=options.query, use_standard_sql=True)
+            | "LogData" >> Map(logging.info)
+        )
+
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

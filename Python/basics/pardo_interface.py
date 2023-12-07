@@ -12,56 +12,58 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import DoFn
-from apache_beam import Map
-from apache_beam import ParDo
-from apache_beam import window
+from apache_beam import Create, DoFn, Map, ParDo, window
 
 
 class DoFnMethods(DoFn):
+    def __init__(self):
+        logging.debug("__init__")
+        self.window = window.GlobalWindow()
+        self.list = []
 
-  def __init__(self):
-    logging.debug("__init__")
-    self.window = window.GlobalWindow()
-    self.list = []
+    def setup(self):
+        logging.debug("setup")
 
-  def setup(self):
-    logging.debug("setup")
+    def start_bundle(self):
+        logging.debug("start_bundle")
+        self.list = []
 
-  def start_bundle(self):
-    logging.debug("start_bundle")
-    self.list = []
+    def process(self, element, window=DoFn.WindowParam):
+        self.list.append(element)
+        yield f"* process: {element}"
 
-  def process(self, element, window=DoFn.WindowParam):
-    self.list.append(element)
-    yield f"* process: {element}"
+    def finish_bundle(self):
+        # third party libraries
+        from apache_beam.utils.windowed_value import WindowedValue
 
-  def finish_bundle(self):
-    from apache_beam.utils.windowed_value import WindowedValue
-    # yielded elements from finish_bundle have to be type WindowedValue.
-    yield WindowedValue(
-        value=f"* finish_bundle: {self.list}",
-        timestamp=0,
-        windows=[self.window],
-    )
+        # yielded elements from finish_bundle have to be type WindowedValue.
+        yield WindowedValue(
+            value=f"* finish_bundle: {self.list}",
+            timestamp=0,
+            windows=[self.window],
+        )
 
-  def teardown(self):
-    logging.debug("teardown")
+    def teardown(self):
+        logging.debug("teardown")
 
 
 def run(argv=None):
-  n = 20
+    n = 20
 
-  with beam.Pipeline() as p:
-    output = (p | Create(range(n))
-                | "DoFn Methods" >> ParDo(DoFnMethods())
-                | "Log" >> Map(logging.info))
+    with beam.Pipeline() as p:
+        output = (
+            p
+            | Create(range(n))
+            | "DoFn Methods" >> ParDo(DoFnMethods())
+            | "Log" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

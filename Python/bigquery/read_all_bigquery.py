@@ -12,37 +12,46 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
-from apache_beam.io import ReadAllFromBigQuery
-from apache_beam.io import ReadFromBigQueryRequest
+from apache_beam import Create, Map
+from apache_beam.io import ReadAllFromBigQuery, ReadFromBigQueryRequest
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run(argv=None):
-  """Use ReadAllFromBigQuery to define table and query reads from
-  BigQuery at pipeline runtime.
-  """
-  query1 = ("SELECT repository_language, COUNT(repository_language) totalRepos"
-            " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1");
-  query2 = ("SELECT year, mother_residence_state, COUNT(*) countByYearState"
-            " FROM `bigquery-public-data.samples.natality` GROUP BY 1, 2")
-  table = "bigquery-public-data:samples.shakespeare"
+    """Use ReadAllFromBigQuery to define table and query reads from
+    BigQuery at pipeline runtime.
+    """
+    query1 = (
+        "SELECT repository_language, COUNT(repository_language) totalRepos"
+        " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1"
+    )
+    query2 = (
+        "SELECT year, mother_residence_state, COUNT(*) countByYearState"
+        " FROM `bigquery-public-data.samples.natality` GROUP BY 1, 2"
+    )
+    table = "bigquery-public-data:samples.shakespeare"
 
-  options = PipelineOptions()
-  with beam.Pipeline(options=options) as p:
-    read_requests = p | Create([
-      ReadFromBigQueryRequest(query=query1),
-      ReadFromBigQueryRequest(query=query2),
-      ReadFromBigQueryRequest(table=table)
-    ])
-    output = (read_requests | "ReadFromAll" >> ReadAllFromBigQuery()
-                            | "LogMessages" >> Map(logging.info)
-              )
+    options = PipelineOptions()
+    with beam.Pipeline(options=options) as p:
+        read_requests = p | Create(
+            [
+                ReadFromBigQueryRequest(query=query1),
+                ReadFromBigQueryRequest(query=query2),
+                ReadFromBigQueryRequest(table=table),
+            ]
+        )
+        output = (
+            read_requests
+            | "ReadFromAll" >> ReadAllFromBigQuery()
+            | "LogMessages" >> Map(logging.info)
+        )
+
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

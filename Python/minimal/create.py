@@ -12,19 +12,19 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Create
-from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run(argv=None):
-  with beam.Pipeline() as p:
-
-    p | Create(range(10))
+    with beam.Pipeline() as p:
+        p | Create(range(10))
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()
