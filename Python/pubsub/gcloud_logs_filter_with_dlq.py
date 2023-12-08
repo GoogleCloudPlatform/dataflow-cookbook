@@ -25,6 +25,10 @@ from apache_beam.io import WriteToPubSub
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
+PROCESSED_TAG = "processed"
+UNPROCESSED_TAG = "unprocessed"
+
+
 class PubSubOptions(PipelineOptions):
 
     @classmethod
@@ -58,18 +62,18 @@ def run():
 
     3. Message Splitting:
         - Divides messages into two categories:
-        a. 'processed' (contain both 'severity' and 'jsonPayload' fields)
-        b. 'unprocessed' (missing one or both of these fields).
+        a. PROCESSED (contain both 'severity' and 'jsonPayload' fields)
+        b. UNPROCESSED (missing one or both of these fields).
 
     4. Severity Filtering:
-        - For 'processed' messages, filters out those with severity other than "ERROR".
+        - For PROCESSED messages, filters out those with severity other than "ERROR".
 
     5. Data Transformation:
-        - Extracts timestamp and message content from the 'jsonPayload' field for 'processed' messages.
+        - Extracts timestamp and message content from the 'jsonPayload' field for PROCESSED messages.
 
     6. Output Handling:
-        - Writes transformed 'processed' messages to a specified output Pub/Sub topic.
-        - Sends 'unprocessed' messages to a Dead Letter Queue (DLQ) topic.
+        - Writes transformed PROCESSED messages to a specified output Pub/Sub topic.
+        - Sends UNPROCESSED messages to a Dead Letter Queue (DLQ) topic.
     """
 
     options = PubSubOptions(streaming=True)
@@ -77,17 +81,17 @@ def run():
     with beam.Pipeline(options=options) as p:
         split_result = (p | "Read from PubSub" >> ReadFromPubSub(topic=options.input_topic)
                             | "Parse JSON" >> Map(lambda msg: json.loads(msg))
-                            | "Split Messages" >> ParDo(SplitMessages()).with_outputs("unprocessed", "processed"))
+                            | "Split Messages" >> ParDo(SplitMessages()).with_outputs(UNPROCESSED_TAG, PROCESSED_TAG))
 
         # Filter processed messages and write to output topic
-        (split_result['processed']
+        (split_result[PROCESSED_TAG]
          | "Filter by Severity" >> Filter(filter_by_severity)
-         | "Transform Data" >> Map(transform_data)
+         | "Map to PubsubMessage for output" >> Map(to_pubsub_message_for_output)
          | "Write to PubSub" >> WriteToPubSub(options.output_topic, with_attributes=True))
 
         # Write unprocessed messages to DLQ
-        (split_result['unprocessed']
-         | "Map to PubsubMessage" >> Map(to_pubsub_message)
+        (split_result[UNPROCESSED_TAG]
+         | "Map to PubsubMessage for DLQ" >> Map(to_pubsub_message_for_dlq)
          | "Write to DLQ" >> WriteToPubSub(options.dlq_topic, with_attributes=True))
 
 
@@ -96,9 +100,9 @@ class SplitMessages(DoFn):
         from apache_beam.pvalue import TaggedOutput
 
         if ('severity' in element) & ('jsonPayload' in element):
-            yield TaggedOutput('processed', element)
+            yield TaggedOutput(PROCESSED_TAG, element)
         else:
-            yield TaggedOutput('unprocessed', element)
+            yield TaggedOutput(UNPROCESSED_TAG, element)
 
 
 def filter_by_severity(log):
@@ -106,13 +110,13 @@ def filter_by_severity(log):
     return log.get("severity").upper() == "ERROR"
 
 
-def to_pubsub_message(msg):
+def to_pubsub_message_for_dlq(msg):
     from apache_beam.io import PubsubMessage
 
     return PubsubMessage(data=bytes(json.dumps(msg), "utf-8"), attributes=None)
 
 
-def transform_data(log):
+def to_pubsub_message_for_output(log):
     from apache_beam.io import PubsubMessage
 
     # Example transformation: Extract relevant information from the log
