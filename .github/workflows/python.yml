@@ -12,24 +12,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-name: Java CI
+name: Run basic tests with Python 3.8
 
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  build:
-
+  tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      working-directory: ./Java
-      run: mvn -B package
+      - uses: actions/checkout@v3
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.8"
+      - name: Init env
+        run: |
+          cd Python
+          make init
+      - name: Run format and lint
+        run: |
+          make format
+          make lint
