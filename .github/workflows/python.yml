@@ -32,5 +32,6 @@ jobs:
           make init
       - name: Run format and lint
         run: |
+          cd Python
           make format
           make lint
