@@ -40,7 +40,7 @@ def run(argv=None):
             | "ReadParquet" >> ReadFromParquet(options.path)
             | "CheckRow"
             >> Map(
-                lambda row: f"The abbreviation of {row['name']} is {row['post_abbr']}"
+                lambda row: f"The abbreviation of {row['name']} is {row['post_abbr']}"  # noqa:E501
             )
             | Map(logging.info)
         )

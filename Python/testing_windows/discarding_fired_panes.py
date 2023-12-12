@@ -99,8 +99,8 @@ def run():
         >> WindowInto(
             FixedWindows(size=window_size_seconds),
             allowed_lateness=window_allowed_lateness_seconds,
-            # Late elements are contained within their own pane and no correlation
-            # exists between the panes
+            # Late elements are contained within their own pane
+            # and no correlation exists between the panes
             accumulation_mode=AccumulationMode.DISCARDING,
         )
         | "Combine elements within pane by key" >> GroupByKey()
@@ -118,13 +118,20 @@ if __name__ == "__main__":
 
 EXPLANATION
   1 - Elements "On-Time-X" arrive to the pipeline before window closes
-  2 - Elements "Late-(1 to 4)" arrive after window closing, but within the allowed late time
-  3 - Elements "Late-(5, 6)" also arrive after window closing, but within the allowed late time
-  4 - Element "Outside-allowed-lateness" is discarded as it's outside the allowed lateness
+  2 - Elements "Late-(1 to 4)" arrive after window closing,
+      but within the allowed late time
+  3 - Elements "Late-(5, 6)" also arrive after window closing,
+      but within the allowed late time
+  4 - Element "Outside-allowed-lateness" is discarded
+      as it's outside the allowed lateness
 
-  The first trigger contains elements (1), since they arrive before window closing
-  The second trigger contains elements (2) and only elements (2). They are triggered by themselves as they arrived late
-  The thrid trigger contains only elements (3) since they also arrived late but at different time
+  The first trigger contains elements (1), since they arrive
+  before window closing
+  The second trigger contains elements (2) and only elements (2).
+  They are triggered by themselves as they arrived late
+  The thrid trigger contains only elements (3)
+  since they also arrived late but at different time
 
-Element "On-Time-New-Window-1" shows that this process continues until termination
+Element "On-Time-New-Window-1" shows that this process continues
+until termination
 """

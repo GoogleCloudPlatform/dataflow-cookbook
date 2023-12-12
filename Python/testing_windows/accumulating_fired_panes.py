@@ -85,7 +85,7 @@ def get_input_stream():
 def print_with_info(element, window=DoFn.WindowParam, pane=DoFn.PaneInfoParam):
     """Helper function to print window and pane info"""
     print(
-        f"Element: {element[1]} \n\t Window: {window} \n\t Pane Timing: {PaneInfoTiming.to_string(pane.timing)}"
+        f"Element: {element[1]} \n\t Window: {window} \n\t Pane Timing: {PaneInfoTiming.to_string(pane.timing)}"  # noqa:E501
     )
 
 
@@ -106,10 +106,12 @@ def run():
         | "Window into FixedWindows"
         >> WindowInto(
             # We are using the default triggering which triggers when watermark
-            # crosses the window end and whenever valid late element(s) are added
+            # crosses the window end and whenever valid late element(s)
+            # are added
             FixedWindows(size=window_size_seconds),
             allowed_lateness=window_allowed_lateness_seconds,
-            # Late elements are combined with previous elements within the window
+            # Late elements are combined with previous elements within
+            # the window
             accumulation_mode=AccumulationMode.ACCUMULATING,
         )
         | "Combine elements within pane by key" >> GroupByKey()
@@ -126,12 +128,18 @@ if __name__ == "__main__":
 """
 EXPLANATION
 1 - Elements "On-Time-X" arrive to the pipeline before window closes
-2 - Elements "Late-(1 to 4)" arrive after window closing, but within the allowed late time
-3 - Elements "Late-(5, 6)" also arrive after window closing, but within the allowed late time
-4 - Element "Outside-allowed-lateness" is discarded as it's outside the allowed lateness
+2 - Elements "Late-(1 to 4)" arrive after window closing, but within
+    the allowed late time
+3 - Elements "Late-(5, 6)" also arrive after window closing, but within
+    the allowed late time
+4 - Element "Outside-allowed-lateness" is discarded as it's outside
+    the allowed lateness
 
 
-The first trigger contains elements (1), since they arrive before window closing
-The second trigger contains elements (2) and elements (1), since we are accumulating
-The third trigger contains only elements (3) but also (2) and (1) because of the accumulation
+The first trigger contains elements (1), since they arrive before
+window closing
+The second trigger contains elements (2) and elements (1),
+since we are accumulating
+The third trigger contains only elements (3) but also (2) and (1)
+because of the accumulation
 """

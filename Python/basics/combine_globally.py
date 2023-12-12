@@ -24,7 +24,7 @@ def run(argv=None):
     elements = [
         "Lorem ipsum dolor sit amet. Consectetur adipiscing elit",
         "Sed eu velit nec sem vulputate loborti",
-        "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum",
+        "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum",  # noqa:E501
         "Ut blandit massa et risus sollicitudin auctor",
     ]
 

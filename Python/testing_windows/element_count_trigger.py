@@ -48,7 +48,8 @@ def get_input_stream():
         .advance_processing_time(2)
         .add_elements(
             [
-                # Different event times but elements "arrived" same time in pipeline
+                # Different event times but elements "arrived"
+                # same time in pipeline
                 TimestampedValue("Same-Time-1", timestamp=4),
                 TimestampedValue("Same-Time-2", timestamp=5),
                 TimestampedValue("Same-Time-3", timestamp=6),
@@ -112,18 +113,20 @@ def run():
             allowed_lateness=window_allowed_lateness_seconds,
             accumulation_mode=trigger.AccumulationMode.DISCARDING,
             # Try setting different types of triggers!
-            # AfterWatermark only fires pane once when the watermark crosses the
-            # Window end time
+            # AfterWatermark only fires pane once when the watermark
+            # crosses the Window end time
             # trigger=trigger.AfterWatermark()
-            # We  repeatedly fire panes forever with count as least late_pane_size
+            # We  repeatedly fire panes forever with count as
+            # least late_pane_size
             # We also want to set a termination to stop above infinite fires so
             # use AfterWatermark a final trigger.
             # trigger=trigger.OrFinally(
             #     trigger.Repeatedly(trigger.AfterCount(late_pane_size)),
             #     trigger.AfterWatermark()
             # )
-            # We need to configure how late data should be handled to prevent data
-            #  loss since AfterWatermark by default only fires once
+            # We need to configure how late data should be handled
+            # to prevent data loss since AfterWatermark
+            # by default only fires once
             # https://github.com/apache/beam/blob/master/sdks/python/apache_beam/transforms/trigger.py#L596
             trigger=trigger.OrFinally(
                 trigger.Repeatedly(trigger.AfterCount(late_pane_size)),
@@ -145,18 +148,27 @@ if __name__ == "__main__":
 """
 EXPLANATION
 
-`trigger.AfterCount` triggers whenever the current pane has at least `late_pane_size` elements,
- but there are some constrains.
+`trigger.AfterCount` triggers whenever the current pane has
+at least `late_pane_size` elements, but there are some constrains.
 
-1 - The first trigger contains "First" and "Second", which is expected since they are the first 2 elements.
-2 - The second trigger contains the "Third" element but also all of "Same-Time-X" elements, so it is not just 2 elements.
-  This happens because of "Same-Time-X" arrive at the same time, so there is no second element but second elements
-3 - The third trigger only contains "Last-In-Window", this is because we have `trigger.OrFinally(... , trigger.AfterWatermark(...))`
-  so it triggers when the window closes, no matter the number of elements there are in pane.
+1 - The first trigger contains "First" and "Second", which is expected
+    since they are the first 2 elements.
+2 - The second trigger contains the "Third" element but also
+    all of "Same-Time-X" elements, so it is not just 2 elements.
+    This happens because of "Same-Time-X" arrive at the same time,
+    so there is no second element but second elements
+3 - The third trigger only contains "Last-In-Window", this is because
+    we have `trigger.OrFinally(... , trigger.AfterWatermark(...))`
+    so it triggers when the window closes,
+    no matter the number of elements there are in pane.
 4 - The fourth trigger contains "Late-(1,2,3)", since they arrive together
-5 - The next triggers contain the elements as they come, since we have `trigger.OrFinally(... , trigger.AfterWatermark(...))`
-6 - Element "Outside-Window-Lateness" is discarded as it's outside the allowed lateness
+5 - The next triggers contain the elements as they come,
+    since we have `trigger.OrFinally(... , trigger.AfterWatermark(...))`
+6 - Element "Outside-Window-Lateness" is discarded as
+    it's outside the allowed lateness
 
-In a real life scenario, it's not that common two elements arrive at the exact same time, but networking conditions can affect arrival.
-Note: `AfterCount` can cause hanged pipeline if the condition is not met. To resolve this see note in `after_each_trigger.py`
+In a real life scenario, it's not that common two elements arrive
+at the exact same time, but networking conditions can affect arrival.
+Note: `AfterCount` can cause hanged pipeline if the condition is not met.
+To resolve this see note in `after_each_trigger.py`
 """

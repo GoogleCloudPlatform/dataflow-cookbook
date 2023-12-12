@@ -33,7 +33,7 @@ def run(argv=None):
                 "--topic",
                 description="Provide a topic to read from",
                 dest="topic",
-                help="You need to create this topic and the messages will be GCS paths.",
+                help="You need to create this topic and the messages will be GCS paths.",  # noqa:E501
             )
 
     options = ReadAllStreamingTextOptions(streaming=True)

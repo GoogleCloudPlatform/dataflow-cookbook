@@ -27,7 +27,8 @@ INPUT_TOPIC = "projects/pubsub-public-data/topics/taxirides-realtime"
 
 class ParseMessages(DoFn):
     """
-    The input messages are based on key-value pairs ('ride_status': 'passenger_count').
+    The input messages are based on key-value pairs
+    ('ride_status': 'passenger_count').
     Parse data 'ride_status' and 'passenger_count' from messages
     """
 
@@ -55,15 +56,18 @@ def run(argv=None):
         def _add_argparse_args(cls, parser):
             parser.add_argument(
                 "--input_topic",
-                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<ToPIC>."',
+                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<ToPIC>."',  # noqa:E501
                 default=INPUT_TOPIC,
             )
 
     options = GlobalWindowOptions(streaming=True)
 
-    # When using GlobalWindows be careful of not keeping the state forever and clearing state. In this example we
-    # add a compound trigger so that we clean up state and don't let any window without triggering (e.g., we trigger
-    # every 100 elements but we only got 99 for that key). Check Java's `testingWindows` folder for more info.
+    # When using GlobalWindows be careful of not keeping the state forever
+    # and clearing state. In this example we
+    # add a compound trigger so that we clean up state and
+    # don't let any window without triggering (e.g., we trigger
+    # every 100 elements but we only got 99 for that key).
+    # Check Java's `testingWindows` folder for more info.
     compound_trigger = trigger.AfterAny(
         trigger.AfterCount(100), trigger.AfterProcessingTime(60)
     )
@@ -74,7 +78,8 @@ def run(argv=None):
             p
             | "ReadFromPubSub" >> ReadFromPubSub(topic=options.input_topic)
             | "ParseMessages" >> ParDo(ParseMessages())
-            # Apply a Global Window and trigger repeatedly firing after at least 100 elements or 60s from first element.
+            # Apply a Global Window and trigger repeatedly firing
+            # after at least 100 elements or 60s from first element.
             | "ApplyGlobalWindow"
             >> WindowInto(
                 window.GlobalWindows(),

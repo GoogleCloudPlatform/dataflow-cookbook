@@ -45,7 +45,8 @@ def get_input_stream():
         .advance_processing_time(3)
         .add_elements(
             [
-                # Although pane fired, below element still within lateness configured
+                # Although pane fired, below element still
+                # within lateness configured
                 TimestampedValue("Late-but-allowed", timestamp=9)
             ]
         )
@@ -90,10 +91,13 @@ def run():
         >> WindowInto(
             FixedWindows(size=window_size_seconds),
             allowed_lateness=window_allowed_lateness_seconds,
-            # Set `accumulation_mode` as `ACCUMULATING` when you want to collect all the
-            # panes fired in the window. To have the panes be considered individually
-            # use `DISCARDING` mode. Use `DISCARDING` when the datum are indipendent
-            # of each other. `ACCUMULATING` will fire each time the a panes arrives from a window
+            # Set `accumulation_mode` as `ACCUMULATING` when you want to
+            # collect all the panes fired in the window.
+            # To have the panes be considered individually
+            # use `DISCARDING` mode. Use `DISCARDING`
+            # when the datum are independent of each other.
+            # `ACCUMULATING` will fire each time
+            # when a panes arrives from a window
             accumulation_mode=AccumulationMode.DISCARDING,
         )
         | "Group together elements within same pane and key" >> GroupByKey()
@@ -111,14 +115,21 @@ if __name__ == "__main__":
 
 #   EXPLANATION
 # 1 - Elements A,B,C,D arrive to the pipeline on time
-# 1 - Element "Late-but-before-window-closing" arrives 9s late, but before window closes
-# 2 - Element "Late-but-allowed" arrives after window closing, but within the allowed late time
-# 3 - Element "Late-and-outside-window" arrives after window closing and after allowed late time
-# 4 - Element "window-2" arrives on time but in a different window than 0 to 10000
+# 1 - Element "Late-but-before-window-closing" arrives 9s late,
+#     but before window closes
+# 2 - Element "Late-but-allowed" arrives after window closing,
+#     but within the allowed late time
+# 3 - Element "Late-and-outside-window" arrives after window closing and
+#     after allowed late time
+# 4 - Element "window-2" arrives on time but in a different window
+#     than 0 to 10000
 #
-# The first trigger with elements (1) contains all data from the first window that arrived before window closed
-# The second trigger with element (2) includes the data that arrived late but within the allowed late time
+# The first trigger with elements (1) contains all data from the first window
+# that arrived before window closed
+# The second trigger with element (2) includes the data that arrived late
+# but within the allowed late time
 # Elements in (3) are discarded, since they arrive after the allowed late time
-# The third trigger with element (4) appears in a new window `[10.0, 20.0)` with pane index `0`
-# Even though the Window is same for (1) (2) the pane index for (1) is `0` and for (2) is `1`
-# denoting they are logically separated
+# The third trigger with element (4) appears in a new window `[10.0, 20.0)`
+# with pane index `0`
+# Even though the Window is same for (1) (2) the pane index for (1) is `0`
+# and for (2) is `1` denoting they are logically separated

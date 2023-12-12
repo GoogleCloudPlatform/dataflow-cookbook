@@ -30,7 +30,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run(argv=None):
-    """This pipeline shows how to access the rows that failed being inserted to BigQuery"""
+    """This pipeline shows how to access the rows that failed being
+    inserted to BigQuery"""
     topic = "projects/pubsub-public-data/topics/taxirides-realtime"
 
     class FailedRowsOptions(PipelineOptions):

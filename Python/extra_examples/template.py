@@ -28,7 +28,8 @@ _QUERY = (
 
 """
 
-This example shows how to use Classic Templates. Note that Flex Templates are the preferred method.
+This example shows how to use Classic Templates. Note that Flex Templates
+are the preferred method.
 """
 
 
