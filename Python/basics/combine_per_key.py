@@ -24,22 +24,22 @@ def run(argv=None):
     elements = [
         (
             "Latin",
-            "Lorem ipsum dolor sit amet. Consectetur adipiscing elit. Sed eu velit nec sem vulputate loborti",
+            "Lorem ipsum dolor sit amet. Consectetur adipiscing elit. Sed eu velit nec sem vulputate loborti",  # noqa:E501
         ),
         (
             "Latin",
-            "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum",
+            "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum",  # noqa:E501
         ),
         ("English", "From fairest creatures we desire increase"),
         ("English", "That thereby beauty's rose might never die"),
         ("English", "But as the riper should by time decease"),
         (
             "Spanish",
-            "En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho",
+            "En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho",  # noqa:E501
         ),
         (
             "Spanish",
-            "tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua",
+            "tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua",  # noqa:E501
         ),
     ]
 

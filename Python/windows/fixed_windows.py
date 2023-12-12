@@ -26,7 +26,8 @@ INPUT_TOPIC = "projects/pubsub-public-data/topics/taxirides-realtime"
 
 class ParseMessages(DoFn):
     """
-    The input messages are based on key-value pairs ('ride_status': 'passenger_count').
+    The input messages are based on key-value pairs
+    ('ride_status': 'passenger_count').
     Parse data 'ride_status' and 'passenger_count' from messages
     """
 
@@ -54,7 +55,7 @@ def run(argv=None):
         def _add_argparse_args(cls, parser):
             parser.add_argument(
                 "--input_topic",
-                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<ToPIC>."',
+                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<ToPIC>."',  # noqa:E501
                 default=INPUT_TOPIC,
             )
 

@@ -28,7 +28,8 @@ def run():
         def _add_argparse_args(cls, parser):
             parser.add_argument(
                 "--topic",
-                # Run on Dataflow or authenticate to not get 403 PermissionDenied
+                # Run on Dataflow or authenticate to not get
+                # 403 PermissionDenied
                 default="projects/pubsub-public-data/topics/taxirides-realtime",
                 help="PubSub topic to read",
             )

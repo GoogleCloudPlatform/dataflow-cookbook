@@ -44,7 +44,8 @@ def get_input_stream():
                 TimestampedValue("Fifth", timestamp=4.5),
             ]
         )
-        # change 6 -> 4 and processing time 3 -> 1, to see AfterProcessingTime functionality
+        # change 6 -> 4 and processing time 3 -> 1,
+        # to see AfterProcessingTime functionality
         .advance_watermark_to(6)
         .advance_processing_time(3)
         .add_elements(
@@ -147,16 +148,23 @@ if __name__ == "__main__":
 
 # EXPLANATION
 #
-# By default, `trigger.AfterWatermark()` triggers when the the window closes and
-# fires whenever late element are encountered, but the default behaviour can be
-# overridden using `early` and `late`, where `early` deals with triggering logic for elements within
+# By default, `trigger.AfterWatermark()` triggers when the the window closes
+# and fires whenever late element are encountered,
+# but the default behaviour can be overridden using `early` and `late`,
+# where `early` deals with triggering logic for elements within
 # window and `late` deals with triggering logic for late data
 #
-# 1 - The first trigger contains "First" to "Fifth", which are the early firings because of
-#   `trigger.AfterProcessingTime(delay=delay)`, so all elements that arrived from 0 to 5.
-# 2 - Second trigger contains the rest of the elements that arrived on time before the window closed
-# 3 - Since `late` uses `AfterEach` with two triggers of `AfterCount` but with different
-#   count size. Third pane triggers when the pane has at-least 3 elements
-# 4 - Fourth trigger only contains "Late-4" since second trigger is `trigger.AfterCount(1)` from the `AfterEach`
-# 5 - "Late-5", "Late-6", "Late-7" is triggered because `trigger.AfterCount(count=late_pane_size)` is triggered again
-#         -> See "after_each_trigger.py" to see working for `AfterEach`
+# 1 - The first trigger contains "First" to "Fifth",
+#     which are the early firings because of
+#     `trigger.AfterProcessingTime(delay=delay)`,
+#     so all elements that arrived from 0 to 5.
+# 2 - Second trigger contains the rest of the elements that arrived on time
+#     before the window closed
+# 3 - Since `late` uses `AfterEach` with two triggers of `AfterCount`
+#     but with different count size.
+#     Third pane triggers when the pane has at-least 3 elements
+# 4 - Fourth trigger only contains "Late-4" since second trigger
+#     is `trigger.AfterCount(1)` from the `AfterEach`
+# 5 - "Late-5", "Late-6", "Late-7" is triggered
+#     because `trigger.AfterCount(count=late_pane_size)` is triggered again
+#     -> See "after_each_trigger.py" to see working for `AfterEach`

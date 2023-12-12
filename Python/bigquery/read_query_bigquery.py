@@ -28,8 +28,8 @@ class ReadQueryOptions(PipelineOptions):
         parser.add_argument(
             "--query",
             default=(
-                "SELECT repository_language, COUNT(repository_language) totalRepos"
-                " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1"
+                "SELECT repository_language, COUNT(repository_language) totalRepos"  # noqa:E501
+                " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1"  # noqa:E501
             ),
             help="BigQuery query to read data",
         )

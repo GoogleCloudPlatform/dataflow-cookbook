@@ -41,7 +41,7 @@ def run(argv=None):
         def _add_argparse_args(cls, parser):
             parser.add_argument("--output_table", help="BQ Table to write")
 
-    table_schema = "ride_status:STRING, passenger_count:INTEGER, meter_reading:FLOAT, timestamp:STRING"
+    table_schema = "ride_status:STRING, passenger_count:INTEGER, meter_reading:FLOAT, timestamp:STRING"  # noqa:E501
     options = StreamingInsertsOptions()
     with beam.Pipeline(options=options) as p:
         output = (

@@ -44,7 +44,8 @@ class NestedBigQueryOptions(PipelineOptions):
 
 
 def run(argv=None):
-    """This pipeline shows how to read, write and modify nested fields from BigQuery"""
+    """This pipeline shows how to read, write and modify nested fields
+    from BigQuery"""
 
     schema = {
         "fields": [

@@ -47,7 +47,7 @@ def run(argv=None):
                 help="Frequency to trigger the load job",
             )
 
-    table_schema = "ride_status:STRING, passenger_count:INTEGER, meter_reading:FLOAT, timestamp:STRING"
+    table_schema = "ride_status:STRING, passenger_count:INTEGER, meter_reading:FLOAT, timestamp:STRING"  # noqa:E501
     options = StreamingLoadOptions()
     with beam.Pipeline(options=options) as p:
         output = (

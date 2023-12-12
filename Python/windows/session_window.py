@@ -17,7 +17,14 @@ import json
 import logging
 
 # third party libraries
-from apache_beam import CombinePerKey, DoFn, ParDo, Pipeline, WindowInto, window
+from apache_beam import (  # noqa:E501
+    CombinePerKey,
+    DoFn,
+    ParDo,
+    Pipeline,
+    WindowInto,
+    window,
+)
 from apache_beam.io.gcp.pubsub import ReadFromPubSub
 from apache_beam.options.pipeline_options import PipelineOptions
 
@@ -26,7 +33,8 @@ INPUT_TOPIC = "projects/pubsub-public-data/topics/taxirides-realtime"
 
 class ParseMessages(DoFn):
     """
-    The input messages are based on key-value pairs ('ride_status': 'passenger_count').
+    The input messages are based on key-value pairs
+    ('ride_status': 'passenger_count').
     Parse data 'ride_status' and 'passenger_count' from messages
     """
 
@@ -54,7 +62,7 @@ def run(argv=None):
         def _add_argparse_args(cls, parser):
             parser.add_argument(
                 "--input_topic",
-                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>."',
+                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>."',  # noqa:E501
                 default=INPUT_TOPIC,
             )
 
