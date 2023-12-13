@@ -14,7 +14,6 @@
 
 import logging
 import apache_beam as beam
-import typing
 
 from apache_beam import Map
 from apache_beam.io.kafka import WriteToKafka
@@ -55,11 +54,11 @@ def run():
         ]
 
         output = (p | 'Create' >> beam.Create(elements)
-                    | beam.Map(lambda x: (x[0].to_bytes(2, 'big') , bytes(x[1], encoding=' utf-8')))
-                        .with_output_types(typing.Tuple[bytes, bytes])  # Kafka write transforms expects KVs.
                     | "Write to Kafka" >> WriteToKafka(
                         producer_config={'bootstrap.servers': options.bootstrap_servers},
-                        topic=options.topic
+                        topic=options.topic,
+                        key_serializer='org.apache.kafka.common.serialization.LongSerializer',
+                        value_serializer='org.apache.kafka.common.serialization.StringSerializer'
                     ))
 
 
