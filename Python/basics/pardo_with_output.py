@@ -44,7 +44,8 @@ def run(argv=None):
             | "Split Output" >> ParDo(SplitFn()).with_outputs("even", "odd")
         )
 
-        # Log each element of both tagged PCollections and the main untagged PCollection
+        # Log each element of both tagged PCollections
+        # and the main untagged PCollection
         odd = output.odd | "odd log" >> Map(
             lambda x: logging.info("odds %d" % x)
         )
