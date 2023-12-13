@@ -22,7 +22,6 @@ from apache_beam import Map
 from apache_beam import ParDo
 from apache_beam.io import ReadFromBigQuery
 from apache_beam.io import WriteToBigQuery
-from apache_beam.io.gcp.bigquery import BigQueryDisposition
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
