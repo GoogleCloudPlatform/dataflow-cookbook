@@ -44,6 +44,8 @@ def run(argv=None):
     class WriteBigQueryOptions(PipelineOptions):
         @classmethod
         def _add_argparse_args(cls, parser):
+            # Add a command line flag to be parsed along
+            # with other normal PipelineOptions
             parser.add_argument(
                 "--output_table", required=True, help="BQ Table to write"
             )

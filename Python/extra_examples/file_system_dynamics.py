@@ -24,6 +24,10 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 class WriteFileSystems(DoFn):
     def process(self, element):
+        # Beam's built-in FileSystems module has built in support for many
+        # different backing storage systems, we use this to write our element.
+        # Each input element is formatted as a Tuple of the form
+        # <destination file, data to write>
         writer = FileSystems.create(element[0])
         writer.write(bytes(element[1], encoding="utf8"))
         writer.close()

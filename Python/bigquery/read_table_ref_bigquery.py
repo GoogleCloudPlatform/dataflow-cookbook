@@ -23,12 +23,14 @@ from apache_beam.io.gcp.internal.clients import bigquery
 
 
 def run(argv=None):
+    # Configure the table we are reading from.
     table = bigquery.TableReference(
         projectId="bigquery-public-data",
         datasetId="samples",
         tableId="github_timeline",
     )
 
+    # Create a Beam pipeline with 2 steps: read from BigQuery and log the data.
     with beam.Pipeline() as p:
         output = (
             p

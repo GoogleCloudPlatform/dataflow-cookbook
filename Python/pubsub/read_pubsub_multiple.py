@@ -26,14 +26,18 @@ def run():
     class ReadPubSubOptions(PipelineOptions):
         @classmethod
         def _add_argparse_args(cls, parser):
+            # Add a command line flag to be parsed along
+            # with other normal PipelineOptions
             parser.add_argument(
                 "--sources",
                 required=True,
-                help="PubSub topics or subscriptions, separated by a coma,"
+                help="PubSub topics or subscriptions, separated by a comma,"
                 "e.g.: projects/a/topics/t1,projects/a/topics/t2.",
             )
 
     options = ReadPubSubOptions(streaming=True)
+    # Split the source argument into a list of sources that can be read by
+    # Beam's MultipleReadFromPubSub transform
     sources = [PubSubSourceDescriptor(s) for s in options.sources.split(",")]
 
     with beam.Pipeline(options=options) as p:
