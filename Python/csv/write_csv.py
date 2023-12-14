@@ -12,11 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
-from apache_beam import Create
-from apache_beam import Map
+# third party libraries
+import apache_beam as beam
+from apache_beam import Create, Map
 from apache_beam.io.textio import WriteToCsv
 from apache_beam.options.pipeline_options import PipelineOptions
 
@@ -24,10 +25,12 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class CsvOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--file_path',
+            "--file_path",
             default="gs://quick_test_dataflow/test-names.csv",
-            help='Csv file path'
+            help="Csv file path"
         )
 
 
@@ -49,14 +52,20 @@ def run():
             (6, "Eliza")
         ]
 
-        output = (p | 'Create' >> Create(elements)
-                    | 'Map to Row' >> Map(map_to_row)
-                    | "Write to Csv file" >> WriteToCsv(
-                        path=options.file_path
-                    ))
+        output = (
+            p
+            | "Create" >> Create(elements)
+            | "Map to Row" >> Map(map_to_row)
+            | "Write to Csv file" >> WriteToCsv(
+                path=options.file_path
+            )
+        )
 
 
 def map_to_row(element):
+    """
+    Converts a given element into a Beam Row object.
+    """
 
     return beam.Row(id=element[0], name=element[1])
 
