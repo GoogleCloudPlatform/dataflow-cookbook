@@ -12,15 +12,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
+from typing import NamedTuple
 
-from apache_beam import coders
-from apache_beam import Create
-from apache_beam import Map
+# third party libraries
+import apache_beam as beam
+from apache_beam import coders, Create, Map
 from apache_beam.io.gcp.spanner import SpannerInsert
 from apache_beam.options.pipeline_options import PipelineOptions
-from typing import NamedTuple
 
 
 class ExampleRow(NamedTuple):
@@ -31,25 +31,27 @@ class ExampleRow(NamedTuple):
 class SpannerOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--project_id',
-            default='your-project',
-            help='Google Cloud project ID'
+            "--project_id",
+            default="your-project",
+            help="Google Cloud project ID"
         )
         parser.add_argument(
-            '--instance_id',
-            default='your-instance-id',
-            help='Google Cloud Spanner instance ID'
+            "--instance_id",
+            default="your-instance-id",
+            help="Google Cloud Spanner instance ID"
         )
         parser.add_argument(
-            '--database_id',
-            default='your-database-id',
-            help='Google Cloud Spanner database ID'
+            "--database_id",
+            default="your-database-id",
+            help="Google Cloud Spanner database ID"
         )
         parser.add_argument(
-            '--table',
-            default='your-table-name',
-            help='Google Cloud Spanner table name'
+            "--table",
+            default="your-table-name",
+            help="Google Cloud Spanner table name"
         )
 
 
@@ -73,19 +75,24 @@ def run():
         ]
 
         # Create PCollection from the list
-        output = (p | "Create" >> Create(elements)
-                    | "Map to Spanner Row" >> Map(make_spanner_row)
-                        .with_output_types(ExampleRow)
-                    | "Write to Spanner" >> SpannerInsert(
-                        project_id=options.project_id,
-                        instance_id=options.instance_id,
-                        database_id=options.database_id,
-                        table=options.table
-                    ))
+        output = (
+            p
+            | "Create" >> Create(elements)
+            | "Map to Spanner Row" >> Map(make_spanner_row)
+                .with_output_types(ExampleRow)
+            | "Write to Spanner" >> SpannerInsert(
+                project_id=options.project_id,
+                instance_id=options.instance_id,
+                database_id=options.database_id,
+                table=options.table
+            )
+        )
 
 
 def make_spanner_row(element):
-
+    """
+    Converts a given element into an Example Row object.
+    """
     return ExampleRow(element[0], element[1])
 
 
