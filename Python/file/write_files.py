@@ -12,11 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
-from apache_beam import Create
-from apache_beam import Map
+# third party libraries
+import apache_beam as beam
+from apache_beam import Create, Map
 from apache_beam.io.fileio import WriteToFiles
 from apache_beam.options.pipeline_options import PipelineOptions
 
@@ -24,6 +25,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class FilesOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
             "--path",
             default="your-path",
@@ -48,14 +51,22 @@ def run():
             {'id': 6, 'name': 'Eliza'}
         ]
 
-        output = (p | "Create" >> Create(elements)
-                    | "Serialize" >> Map(map_to_json)
-                    | "Write to files" >> WriteToFiles(
-                        path=options.path
-                    ))
+        output = (
+            p
+            | "Create" >> Create(elements)
+            | "Serialize" >> Map(map_to_json)
+            | "Write to files" >> WriteToFiles(
+                path=options.path
+            )
+        )
 
 
 def map_to_json(element):
+    """
+    Converts a given input element into a JSON string.
+    """
+
+    # third party libraries
     import json
 
     return json.dumps(element)

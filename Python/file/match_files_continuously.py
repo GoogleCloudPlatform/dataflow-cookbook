@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
+# third party libraries
+import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io.fileio import MatchContinuously
 from apache_beam.options.pipeline_options import PipelineOptions
@@ -23,6 +25,8 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class FilesOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
             "--file_pattern",
             default="your-file-pattern",
@@ -32,18 +36,22 @@ class FilesOptions(PipelineOptions):
 
 def run():
     """
-    This pipeline shows how to read matching files in the form of ``FileMetadata`` objects continuously.
+    This pipeline shows how to read matching files
+    in the form of ``FileMetadata`` objects continuously.
     """
 
     options = FilesOptions()
 
     with beam.Pipeline(options=options) as p:
 
-        output = (p | "Match files" >> MatchContinuously(
-                        file_pattern=options.file_pattern,
-                        interval=10
-                    )
-                    | "Log Data" >> Map(logging.info))
+        output = (
+            p
+            | "Match files" >> MatchContinuously(
+                file_pattern=options.file_pattern,
+                interval=10
+            )
+            | "Log Data" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
