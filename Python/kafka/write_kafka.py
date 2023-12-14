@@ -12,10 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
-from apache_beam import Map
+# third party libraries
+import apache_beam as beam
+from apache_beam import Create, Map
 from apache_beam.io.kafka import WriteToKafka
 from apache_beam.options.pipeline_options import PipelineOptions
 
@@ -23,15 +25,17 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class KafkaOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--bootstrap_servers',
+            "--bootstrap_servers",
             default="localhost:9092",
-            help='Apache Kafka bootstrap server'
+            help="Apache Kafka bootstrap server"
         )
         parser.add_argument(
-            '--topic',
+            "--topic",
             default="your-topic",
-            help='Apache Kafka topic'
+            help="Apache Kafka topic"
         )
 
 
@@ -53,13 +57,18 @@ def run():
             (6, "Eliza")
         ]
 
-        output = (p | 'Create' >> beam.Create(elements)
-                    | "Write to Kafka" >> WriteToKafka(
-                        producer_config={'bootstrap.servers': options.bootstrap_servers},
-                        topic=options.topic,
-                        key_serializer='org.apache.kafka.common.serialization.LongSerializer',
-                        value_serializer='org.apache.kafka.common.serialization.StringSerializer'
-                    ))
+        output = (
+            p
+            | "Create" >> Create(elements)
+            | "Write to Kafka" >> WriteToKafka(
+                producer_config={
+                    "bootstrap.servers": options.bootstrap_servers
+                },
+                topic=options.topic,
+                key_serializer="org.apache.kafka.common.serialization.LongSerializer",
+                value_serializer="org.apache.kafka.common.serialization.StringSerializer"
+            )
+        )
 
 
 if __name__ == "__main__":
