@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io import ReadFromBigQuery
@@ -21,15 +23,22 @@ from apache_beam.io.gcp.internal.clients import bigquery
 
 
 def run(argv=None):
-  table = bigquery.TableReference(
-      projectId="bigquery-public-data",
-      datasetId="samples",
-      tableId="github_timeline")
+    # Configure the table we are reading from.
+    table = bigquery.TableReference(
+        projectId="bigquery-public-data",
+        datasetId="samples",
+        tableId="github_timeline",
+    )
 
-  with beam.Pipeline() as p:
-    output = (p | "ReadTable" >> ReadFromBigQuery(table=table)
-                | "LogData" >> Map(lambda data: logging.info(data)))
+    # Create a Beam pipeline with 2 steps: read from BigQuery and log the data.
+    with beam.Pipeline() as p:
+        output = (
+            p
+            | "ReadTable" >> ReadFromBigQuery(table=table)
+            | "LogData" >> Map(lambda data: logging.info(data))
+        )
+
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

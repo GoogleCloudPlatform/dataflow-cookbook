@@ -12,33 +12,32 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
-from apache_beam import pvalue
+from apache_beam import Create, Map, pvalue
 
 
 def run(argv=None):
-  elements = [
-      "Dog",
-      "Cat",
-      "Salmon",
-      "Snake",
-      "Eagle",
-      "Owl"
-  ]
-  side_element = ["s"]
+    elements = ["Dog", "Cat", "Salmon", "Snake", "Eagle", "Owl"]
+    side_element = ["s"]
 
-  with beam.Pipeline() as p:
-    side_input = p | "side input" >> Create(side_element)
-    output = (p | Create(elements)
-                | "Make plural" >> Map(lambda text, suffix: text + suffix,
-                                       suffix=pvalue.AsSingleton(side_input))
-                | "Log"
- >> Map(logging.info))
+    with beam.Pipeline() as p:
+        side_input = p | "side input" >> Create(side_element)
+        output = (
+            p
+            | Create(elements)
+            | "Make plural"
+            >> Map(
+                lambda text, suffix: text + suffix,
+                suffix=pvalue.AsSingleton(side_input),
+            )
+            | "Log" >> Map(logging.info)
+        )
+
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

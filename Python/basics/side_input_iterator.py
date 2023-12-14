@@ -12,37 +12,34 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import FlatMap
-from apache_beam import Map
-from apache_beam import pvalue
+from apache_beam import Create, FlatMap, Map, pvalue
 
 
 def color_animal(animal, colors):
-  for color in colors:
-    yield f"{color} {animal}"
+    for color in colors:
+        yield f"{color} {animal}"
+
 
 def run(argv=None):
-  elements = [
-      "Dog",
-      "Cat",
-      "Snake",
-      "Eagle",
-      "Owl"
-  ]
-  side_elements = ["Black", "While", "Brown"]
+    elements = ["Dog", "Cat", "Snake", "Eagle", "Owl"]
+    side_elements = ["Black", "While", "Brown"]
 
-  with beam.Pipeline() as p:
-    side_input = p | "side input" >> Create(side_elements)
-    output = (p | Create(elements)
-                | "Join colors" >> FlatMap(color_animal, colors=pvalue.AsIter(side_input))
-                | "Log"
- >> Map(logging.info))
+    with beam.Pipeline() as p:
+        side_input = p | "side input" >> Create(side_elements)
+        output = (
+            p
+            | Create(elements)
+            | "Join colors"
+            >> FlatMap(color_animal, colors=pvalue.AsIter(side_input))
+            | "Log" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

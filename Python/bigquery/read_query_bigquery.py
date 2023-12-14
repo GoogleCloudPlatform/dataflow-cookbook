@@ -12,8 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io import ReadFromBigQuery
@@ -21,25 +23,34 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 
 class ReadQueryOptions(PipelineOptions):
-
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along with other
+        # normal PipelineOptions. This flag will store the SQL query
+        # to be run against BigQuery.
         parser.add_argument(
             "--query",
             default=(
-                "SELECT repository_language, COUNT(repository_language) totalRepos"
-                " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1"),
-            help="BigQuery query to read data")
+                "SELECT repository_language, COUNT(repository_language) totalRepos"  # noqa:E501
+                " FROM `bigquery-public-data.samples.github_timeline` GROUP BY 1"  # noqa:E501
+            ),
+            help="BigQuery query to read data",
+        )
 
 
 def run(argv=None):
-  options = ReadQueryOptions()
-  with beam.Pipeline(options=options) as p:
-    output = (p | "ReadFromQuery" >> ReadFromBigQuery(query=options.query,
-                                                      use_standard_sql=True)
-                | "LogData" >> Map(logging.info)
-              )
+    options = ReadQueryOptions()
+    # Create a Beam pipeline with 2 steps:
+    # run a query against BigQuery and log the results
+    with beam.Pipeline(options=options) as p:
+        output = (
+            p
+            | "ReadFromQuery"
+            >> ReadFromBigQuery(query=options.query, use_standard_sql=True)
+            | "LogData" >> Map(logging.info)
+        )
+
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

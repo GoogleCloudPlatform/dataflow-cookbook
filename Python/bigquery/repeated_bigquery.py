@@ -12,13 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
-from apache_beam.io.gcp.bigquery import BigQueryDisposition
-from apache_beam.io.gcp.bigquery import ReadFromBigQuery
-from apache_beam.io.gcp.bigquery import WriteToBigQuery
+from apache_beam.io.gcp.bigquery import (
+    BigQueryDisposition,
+    ReadFromBigQuery,
+    WriteToBigQuery,
+)
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
@@ -31,45 +35,42 @@ def repeated_fn(row):
             new_row["year"].append(years["year"])
     return new_row
 
-class RepeatedBigQueryOptions(PipelineOptions):
 
-  @classmethod
-  def _add_argparse_args(cls, parser):
-    parser.add_argument(
-        "--output_table",
-        help="BQ Table to write")
+class RepeatedBigQueryOptions(PipelineOptions):
+    @classmethod
+    def _add_argparse_args(cls, parser):
+        parser.add_argument("--output_table", help="BQ Table to write")
 
 
 def run(argv=None):
-  """This pipeline shows how to read, write and modify nested fields from BigQuery"""
+    """This pipeline shows how to read, write and modify nested fields
+    from BigQuery"""
 
-  schema = {
-      "fields": [
-          {
-              "name": "term",
-              "type": "STRING",
-              "mode": "NULLABLE"
-          },
-          {
-              "name": "year",
-              "type": "INTEGER",
-              "mode": "REPEATED"
-          }
-      ]
-  }
-  sql = ("SELECT term, years FROM "
-         "`bigquery-public-data.google_books_ngrams_2020.eng_fiction_1`")
-  options = RepeatedBigQueryOptions()
-  with beam.Pipeline(options=options) as p:
-    (p | ReadFromBigQuery(query=sql, use_standard_sql=True)
-       | Map(repeated_fn)
-       | WriteToBigQuery(
-            options.output_table,
-            schema=schema,
-            write_disposition=BigQueryDisposition.WRITE_TRUNCATE,
-            create_disposition=BigQueryDisposition.CREATE_IF_NEEDED))
+    schema = {
+        "fields": [
+            {"name": "term", "type": "STRING", "mode": "NULLABLE"},
+            {"name": "year", "type": "INTEGER", "mode": "REPEATED"},
+        ]
+    }
+    sql = (
+        "SELECT term, years FROM "
+        "`bigquery-public-data.google_books_ngrams_2020.eng_fiction_1`"
+    )
+    options = RepeatedBigQueryOptions()
+    with beam.Pipeline(options=options) as p:
+        (
+            p
+            | ReadFromBigQuery(query=sql, use_standard_sql=True)
+            | Map(repeated_fn)
+            | WriteToBigQuery(
+                options.output_table,
+                schema=schema,
+                write_disposition=BigQueryDisposition.WRITE_TRUNCATE,
+                create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
+            )
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()
