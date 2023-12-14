@@ -12,11 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
-from apache_beam import Create
-from apache_beam import Map
+# third party libraries
+import apache_beam as beam
+from apache_beam import Create, Map
 from apache_beam.io.gcp.bigtableio import WriteToBigTable
 from apache_beam.options.pipeline_options import PipelineOptions
 
@@ -24,20 +25,22 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class BigtableOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--project_id',
+            "--project_id",
             required=True,
-            help='Project ID'
+            help="Project ID"
         )
         parser.add_argument(
-            '--instance_id',
+            "--instance_id",
             default="beam-test",
-            help='Cloud Bigtable instance ID'
+            help="Cloud Bigtable instance ID"
         )
         parser.add_argument(
-            '--table_id',
+            "--table_id",
             default="your-test-table",
-            help='Cloud Bigtable table ID'
+            help="Cloud Bigtable table ID"
         )
 
 
@@ -59,16 +62,24 @@ def run():
             (6, "Eliza, 2000, Japan")
         ]
 
-        output = (p | "Create elements" >> Create(elements)
-                    | "Map to BigTable Row" >> Map(make_bigtable_row)
-                    | "Write to BigTable" >> WriteToBigTable(
-            project_id=options.project_id,
-            instance_id=options.instance_id,
-            table_id=options.table_id)
-         )
+        output = (
+            p
+            | "Create elements" >> Create(elements)
+            | "Map to BigTable Row" >> Map(make_bigtable_row)
+            | "Write to BigTable" >> WriteToBigTable(
+                project_id=options.project_id,
+                instance_id=options.instance_id,
+                table_id=options.table_id
+            )
+        )
 
 
 def make_bigtable_row(element):
+    """
+    Converts a given input element into a BigTable DirectRow object.
+    """
+
+    # third party libraries
     from google.cloud.bigtable.row import DirectRow
     from datetime import datetime
 
@@ -76,12 +87,12 @@ def make_bigtable_row(element):
 
     index = element[0]
     row_fields = element[1].split(", ")
-    column_family_id = 'cf1'
-    key = "beam_key%s" % ('{0:07}'.format(index))
+    column_family_id = "cf1"
+    key = "beam_key%s" % ("{0:07}".format(index))
     direct_row = DirectRow(row_key=key)
     for column_id, value in enumerate(row_fields):
         direct_row.set_cell(
-            column_family_id, ('field%s' % column_id).encode('utf-8'),
+            column_family_id, ("field%s" % column_id).encode("utf-8"),
             value,
             datetime.now())
     return direct_row
