@@ -12,15 +12,17 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 import typing
+from typing import NamedTuple
 
+# third party libraries
+import apache_beam as beam
 from apache_beam import coders
 from apache_beam import Map
 from apache_beam.io.jdbc import ReadFromJdbc
 from apache_beam.options.pipeline_options import PipelineOptions
-from typing import NamedTuple
 
 
 class ExampleRow(NamedTuple):
@@ -31,30 +33,32 @@ class ExampleRow(NamedTuple):
 class JdbcOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--table_name',
-            default='your-table-name',
-            help='Table name'
+            "--table_name",
+            default="your-table-name",
+            help="Table name"
         )
         parser.add_argument(
-            '--jdbc_url',
-            default='jdbc:postgresql://localhost:5432/template1',
-            help='JDBC URL'
+            "--jdbc_url",
+            default="jdbc:postgresql://localhost:5432/template1",
+            help="JDBC URL"
         )
         parser.add_argument(
-            '--driver_class_name',
-            default='org.postgresql.Driver',
-            help='Driver class name'
+            "--driver_class_name",
+            default="org.postgresql.Driver",
+            help="Driver class name"
         )
         parser.add_argument(
-            '--username',
-            default='postgres',
-            help='Username'
+            "--username",
+            default="postgres",
+            help="Username"
         )
         parser.add_argument(
-            '--password',
-            default='postgres',
-            help='Password'
+            "--password",
+            default="postgres",
+            help="Password"
         )
 
 
@@ -68,15 +72,20 @@ def run():
 
     with beam.Pipeline(options=options) as p:
 
-        output = (p | 'Read from jdbc' >> ReadFromJdbc(
-                      table_name=options.table_name,
-                      driver_class_name=options.driver_class_name,
-                      jdbc_url=options.jdbc_url,
-                      username=options.username,
-                      password=options.password
-                    )
-                    | 'Map to ExampleRow' >> Map(lambda element: ExampleRow(element[0], element[1]))
-                    | 'Log Data' >> Map(logging.info))
+        output = (
+            p
+            | "Read from jdbc" >> ReadFromJdbc(
+                table_name=options.table_name,
+                driver_class_name=options.driver_class_name,
+                jdbc_url=options.jdbc_url,
+                username=options.username,
+                password=options.password
+            )
+            | "Map to ExampleRow" >> Map(
+                lambda element: ExampleRow(element[0], element[1])
+            )
+            | "Log Data" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":

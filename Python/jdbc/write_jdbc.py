@@ -12,16 +12,16 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 import typing
+from typing import NamedTuple
 
-from apache_beam import coders
-from apache_beam import Create
-from apache_beam import Map
+# third party libraries
+import apache_beam as beam
+from apache_beam import coders, Create, Map
 from apache_beam.io.jdbc import WriteToJdbc
 from apache_beam.options.pipeline_options import PipelineOptions
-from typing import NamedTuple
 
 
 class ExampleRow(NamedTuple):
@@ -32,30 +32,32 @@ class ExampleRow(NamedTuple):
 class JdbcOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--table_name',
-            default='your-table-name',
-            help='Table name'
+            "--table_name",
+            default="your-table-name",
+            help="Table name"
         )
         parser.add_argument(
-            '--jdbc_url',
-            default='jdbc:postgresql://localhost:5432/template1',
-            help='JDBC URL'
+            "--jdbc_url",
+            default="jdbc:postgresql://localhost:5432/template1",
+            help="JDBC URL"
         )
         parser.add_argument(
-            '--driver_class_name',
-            default='org.postgresql.Driver',
-            help='Driver class name'
+            "--driver_class_name",
+            default="org.postgresql.Driver",
+            help="Driver class name"
         )
         parser.add_argument(
-            '--username',
-            default='postgres',
-            help='Username'
+            "--username",
+            default="postgres",
+            help="Username"
         )
         parser.add_argument(
-            '--password',
-            default='postgres',
-            help='Password'
+            "--password",
+            default="postgres",
+            help="Password"
         )
 
 
@@ -78,20 +80,25 @@ def run():
             (6, "Eliza")
         ]
 
-        output = (p | 'Create' >> Create(elements)
-                    | 'Map to ExampleRow' >> Map(make_jdbc_row)
-                        .with_output_types(ExampleRow)
-                    | 'Write to jdbc' >> WriteToJdbc(
-                      table_name=options.table_name,
-                      driver_class_name=options.driver_class_name,
-                      jdbc_url=options.jdbc_url,
-                      username=options.username,
-                      password=options.password
-                    ))
+        output = (
+            p
+            | "Create" >> Create(elements)
+            | "Map to ExampleRow" >> Map(make_jdbc_row)
+                .with_output_types(ExampleRow)
+            | "Write to jdbc" >> WriteToJdbc(
+                table_name=options.table_name,
+                driver_class_name=options.driver_class_name,
+                jdbc_url=options.jdbc_url,
+                username=options.username,
+                password=options.password
+            )
+        )
 
 
 def make_jdbc_row(element):
-
+    """
+    Converts a given element into an Example Row object.
+    """
     return ExampleRow(element[0], element[1])
 
 
