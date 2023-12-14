@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
+# third party libraries
+import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io.textio import ReadFromJson
 from apache_beam.options.pipeline_options import PipelineOptions
@@ -23,10 +25,12 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class JsonOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--file_path',
+            "--file_path",
             default="gs://your-bucket/your-file.json",
-            help='Json file path'
+            help="Json file path"
         )
 
 
@@ -39,11 +43,14 @@ def run():
 
     with beam.Pipeline(options=options) as p:
 
-        output = (p | "Read from Json file" >> ReadFromJson(
-                        path=options.file_path,
-                        lines=False
-                    )
-                    | "Log Data" >> Map(logging.info))
+        output = (
+            p
+            | "Read from Json file" >> ReadFromJson(
+                path=options.file_path,
+                lines=False
+            )
+            | "Log Data" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":

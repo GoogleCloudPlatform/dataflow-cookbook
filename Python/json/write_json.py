@@ -12,11 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
-from apache_beam import Create
-from apache_beam import Map
+# third party libraries
+import apache_beam as beam
+from apache_beam import Create, Map
 from apache_beam.io.textio import WriteToJson
 from apache_beam.options.pipeline_options import PipelineOptions
 
@@ -24,10 +25,12 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class JsonOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--file_path',
+            "--file_path",
             default="gs://your-bucket/your-file.json",
-            help='Json file path'
+            help="Json file path"
         )
 
 
@@ -49,15 +52,20 @@ def run():
             (6, "Eliza")
         ]
 
-        output = (p | 'Create' >> Create(elements)
-                    | 'Map to Row' >> Map(map_to_row)
-                    | "Write to Json file" >> WriteToJson(
-                        path=options.file_path
-                    ))
+        output = (
+            p
+            | "Create" >> Create(elements)
+            | "Map to Row" >> Map(map_to_row)
+            | "Write to Json file" >> WriteToJson(
+                path=options.file_path
+            )
+        )
 
 
 def map_to_row(element):
-
+    """
+    Converts a given element into a Beam Row object.
+    """
     return beam.Row(id=element[0], name=element[1])
 
 
