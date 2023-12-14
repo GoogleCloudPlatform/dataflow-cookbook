@@ -25,6 +25,9 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class ReadQueryOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along with other
+        # normal PipelineOptions. This flag will store the SQL query
+        # to be run against BigQuery.
         parser.add_argument(
             "--query",
             default=(
@@ -37,6 +40,8 @@ class ReadQueryOptions(PipelineOptions):
 
 def run(argv=None):
     options = ReadQueryOptions()
+    # Create a Beam pipeline with 2 steps:
+    # run a query against BigQuery and log the results
     with beam.Pipeline(options=options) as p:
         output = (
             p

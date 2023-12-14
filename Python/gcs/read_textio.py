@@ -27,6 +27,8 @@ def run(argv=None):
     class ReadTextOptions(PipelineOptions):
         @classmethod
         def _add_argparse_args(cls, parser):
+            # Add a command line flag to be parsed along
+            # with other normal PipelineOptions
             parser.add_argument(
                 "--path",
                 default="gs://dataflow-samples/shakespeare/kinglear.txt",
@@ -35,6 +37,11 @@ def run(argv=None):
 
     options = ReadTextOptions()
 
+    # Create a Beam pipeline with 3 steps:
+    # 1) Read text. This will emit one record per line
+    # 2) Count.Globally(). This will count the number of
+    # elements in the PCollection.
+    # 3) Log the output.
     with beam.Pipeline(options=options) as p:
         (
             p

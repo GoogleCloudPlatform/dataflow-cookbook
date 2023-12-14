@@ -23,6 +23,10 @@ from apache_beam.options.pipeline_options import PipelineOptions
 
 class SplitFn(DoFn):
     def process(self, element):
+        # Generate 3 PCollections from the input:
+        # 1) Even elements, with the 'even' tag
+        # 2) Odd elements, with the 'odd' tag
+        # 3) All elements emitted as the main untagged output
         if element % 2 == 0:
             yield pvalue.TaggedOutput("even", element)
         else:
@@ -40,6 +44,8 @@ def run(argv=None):
             | "Split Output" >> ParDo(SplitFn()).with_outputs("even", "odd")
         )
 
+        # Log each element of both tagged PCollections
+        # and the main untagged PCollection
         odd = output.odd | "odd log" >> Map(
             lambda x: logging.info("odds %d" % x)
         )
