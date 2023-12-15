@@ -12,56 +12,60 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
-from apache_beam.io.gcp.bigquery import BigQueryDisposition
-from apache_beam.io.gcp.bigquery import WriteToBigQuery
+from apache_beam import Create, Map
+from apache_beam.io.gcp.bigquery import BigQueryDisposition, WriteToBigQuery
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def make_row(element):
-  row_fields = element.split(", ")
-  return {
-      "name": row_fields[0],
-      "date": row_fields[1],
-      "country": row_fields[2]
-  }
+    row_fields = element.split(", ")
+    return {
+        "name": row_fields[0],
+        "date": row_fields[1],
+        "country": row_fields[2],
+    }
 
 
 def run(argv=None):
-  elements = [
-      "Charles, 2021-02-01, USA",
-      "Alice, 2021-02-04, Spain",
-      "Bob, 2021-02-02, USA",
-      "Amanda, 2021-02-07, France",
-      "Alex, 2021-02-06, Mexico",
-      "Eliza, 2021-02-02, Japan"
-  ]
+    elements = [
+        "Charles, 2021-02-01, USA",
+        "Alice, 2021-02-04, Spain",
+        "Bob, 2021-02-02, USA",
+        "Amanda, 2021-02-07, France",
+        "Alex, 2021-02-06, Mexico",
+        "Eliza, 2021-02-02, Japan",
+    ]
 
-  class WriteBigQueryOptions(PipelineOptions):
+    class WriteBigQueryOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            parser.add_argument("--output_table", help="BQ Table to write")
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          "--output_table",
-          help="BQ Table to write")
+    table_schema = "name:STRING, date:DATE, country:STRING"
+    options = WriteBigQueryOptions()
+    with beam.Pipeline(options=options) as p:
+        output = (
+            p
+            | Create(elements)
+            | Map(make_row)
+            | WriteToBigQuery(
+                options.output_table,
+                schema=table_schema,
+                write_disposition=BigQueryDisposition.WRITE_TRUNCATE,
+                create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
+                additional_bq_parameters={
+                    "timePartitioning": {"type": "DAY"},
+                    "clustering": {"fields": ["country"]},
+                },
+            )
+        )
 
-  table_schema = "name:STRING, date:DATE, country:STRING"
-  options = WriteBigQueryOptions()
-  with beam.Pipeline(options=options) as p:
-    output = (p | Create(elements)
-                | Map(make_row)
-                | WriteToBigQuery(options.output_table,
-                                  schema=table_schema,
-                                  write_disposition=BigQueryDisposition.WRITE_TRUNCATE,
-                                  create_disposition=BigQueryDisposition.CREATE_IF_NEEDED,
-                                  additional_bq_parameters={
-                                      "timePartitioning": {"type": "DAY"},
-                                      "clustering": {"fields": ["country"]}}))
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

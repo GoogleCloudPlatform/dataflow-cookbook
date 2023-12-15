@@ -12,44 +12,42 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import Create
-from apache_beam import Map
-from apache_beam import pvalue
+from apache_beam import Create, Map, pvalue
 
 
 def converter(elements, rates):
-  currency, value = elements
-  converted_value = value * rates[currency]
-  return converted_value
+    currency, value = elements
+    converted_value = value * rates[currency]
+    return converted_value
 
 
 def run(argv=None):
-  elements = [
-      ("USD", 3.1415),
-      ("USD", 1729.0),
-      ("CHF", 2.7182),
-      ("EUR", 1.618),
-      ("CHF", 1.1),
-      ("CHF", 342.45),
-      ("EUR", 890.01)
-  ]
-  side_elements = [
-      ("USD", 1.0),
-      ("EUR", 0.8),
-      ("CHF", 0.9)
-  ]
+    elements = [
+        ("USD", 3.1415),
+        ("USD", 1729.0),
+        ("CHF", 2.7182),
+        ("EUR", 1.618),
+        ("CHF", 1.1),
+        ("CHF", 342.45),
+        ("EUR", 890.01),
+    ]
+    side_elements = [("USD", 1.0), ("EUR", 0.8), ("CHF", 0.9)]
 
-  with beam.Pipeline() as p:
-    side_input = p | "side input" >> Create(side_elements)
-    output = (p | Create(elements)
-                | "Convert" >> Map(converter, rates=pvalue.AsDict(side_input))
-                | "Log"
- >> Map(logging.info))
+    with beam.Pipeline() as p:
+        side_input = p | "side input" >> Create(side_elements)
+        output = (
+            p
+            | Create(elements)
+            | "Convert" >> Map(converter, rates=pvalue.AsDict(side_input))
+            | "Log" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

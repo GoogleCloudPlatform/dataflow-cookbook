@@ -27,9 +27,9 @@
   <packaging>jar</packaging>
 
   <properties>
-    <beam.version>2.50.0</beam.version>
+    <beam.version>2.52.0</beam.version>
 
-    <bigquery.version>v2-rev20200719-1.30.10</bigquery.version>
+    <bigquery.version>v2-rev20231008-2.0.0</bigquery.version>
     <hamcrest.version>2.1</hamcrest.version>
     <jackson.version>2.10.2</jackson.version>
     <joda.version>2.10.5</joda.version>
@@ -39,7 +39,7 @@
     <maven-jar-plugin.version>3.0.2</maven-jar-plugin.version>
     <maven-shade-plugin.version>3.1.0</maven-shade-plugin.version>
     <mockito.version>3.0.0</mockito.version>
-    <pubsub.version>v1-rev20200713-1.30.10</pubsub.version>
+    <pubsub.version>v1-rev20231104-2.0.0</pubsub.version>
     <slf4j.version>1.7.30</slf4j.version>
     <spark.version>2.4.7</spark.version>
     <hadoop.version>2.10.1</hadoop.version>
@@ -48,7 +48,7 @@
     <flink.artifact.name>beam-runners-flink-1.10</flink.artifact.name>
 
     <avro.version>1.10.0</avro.version>
-    <json.version>20230227</json.version>
+    <json.version>20231013</json.version>
     <google-auto-service.version>1.0-rc7</google-auto-service.version>
 
   </properties>
@@ -339,6 +339,12 @@
     <dependency>
       <groupId>org.apache.beam</groupId>
       <artifactId>beam-sdks-java-io-google-cloud-platform</artifactId>
+    </dependency>
+
+    <!-- Adds a dependency on the Avro extensions -->
+    <dependency>
+      <groupId>org.apache.beam</groupId>
+      <artifactId>beam-sdks-java-extensions-avro</artifactId>
     </dependency>
 
     <!-- Dependencies below this line are specific dependencies needed by the examples code. -->

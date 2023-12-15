@@ -12,24 +12,30 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-name: Java CI
+[tool.black]
+line-length = 80
+include = '\.pyi?$'
+exclude = '''
 
-on: [push, pull_request, workflow_dispatch]
-
-jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: maven
-    - name: Build with Maven
-      working-directory: ./Java
-      run: mvn -B package
+(
+  /(
+      \.eggs         # exclude a few common directories in the
+    | \.git          # root of the project
+    | \.hg
+    | \.mypy_cache
+    | \.tox
+    | \.vscode
+    | \.idea
+    | \.ipynb_checkpoints
+    | \.dvc
+    | _build
+    | buck-out
+    | build
+    | dist
+    | venv
+    | node_modules
+  )/
+  | version.py          # also separately exclude a file named foo.py in
+                        # the root of the project
+)
+'''

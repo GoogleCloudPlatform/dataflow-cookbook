@@ -12,27 +12,31 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
-from apache_beam import CombineGlobally
-from apache_beam import Create
-from apache_beam import Map
+from apache_beam import CombineGlobally, Create, Map
 
 
 def run(argv=None):
-  elements = [
-      "Lorem ipsum dolor sit amet. Consectetur adipiscing elit",
-      "Sed eu velit nec sem vulputate loborti",
-      "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum",
-      "Ut blandit massa et risus sollicitudin auctor"]
+    elements = [
+        "Lorem ipsum dolor sit amet. Consectetur adipiscing elit",
+        "Sed eu velit nec sem vulputate loborti",
+        "In lobortis augue vitae sagittis molestie. Mauris volutpat tortor non purus elementum",  # noqa:E501
+        "Ut blandit massa et risus sollicitudin auctor",
+    ]
 
-  with beam.Pipeline() as p:
-    output = (p | Create(elements)
-                | "Join" >> CombineGlobally(lambda x: ". ".join(x))
-                | "Log" >> Map(logging.info))
+    with beam.Pipeline() as p:
+        output = (
+            p
+            | Create(elements)
+            | "Join" >> CombineGlobally(lambda x: ". ".join(x))
+            | "Log" >> Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

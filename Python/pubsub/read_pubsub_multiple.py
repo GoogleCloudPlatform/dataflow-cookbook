@@ -12,36 +12,43 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
 
+# third party libraries
 import apache_beam as beam
 from apache_beam import Map
-from apache_beam.io import MultipleReadFromPubSub
-from apache_beam.io import PubSubSourceDescriptor
+from apache_beam.io import MultipleReadFromPubSub, PubSubSourceDescriptor
 from apache_beam.options.pipeline_options import PipelineOptions
 
 
 def run():
-  class ReadPubSubOptions(PipelineOptions):
+    class ReadPubSubOptions(PipelineOptions):
+        @classmethod
+        def _add_argparse_args(cls, parser):
+            # Add a command line flag to be parsed along
+            # with other normal PipelineOptions
+            parser.add_argument(
+                "--sources",
+                required=True,
+                help="PubSub topics or subscriptions, separated by a comma,"
+                "e.g.: projects/a/topics/t1,projects/a/topics/t2.",
+            )
 
-    @classmethod
-    def _add_argparse_args(cls, parser):
-      parser.add_argument(
-          "--sources",
-          required=True,
-          help="PubSub topics or subscriptions, separated by a coma,"
-               "e.g.: projects/a/topics/t1,projects/a/topics/t2.")
+    options = ReadPubSubOptions(streaming=True)
+    # Split the source argument into a list of sources that can be read by
+    # Beam's MultipleReadFromPubSub transform
+    sources = [PubSubSourceDescriptor(s) for s in options.sources.split(",")]
 
-  options = ReadPubSubOptions(streaming=True)
-  sources = [PubSubSourceDescriptor(s) for s in options.sources.split(',')]
-
-  with beam.Pipeline(options=options) as p:
-
-    (p | "Read multiple PubSub sources" >> MultipleReadFromPubSub(sources)
-       | "Message" >> Map(lambda msg: f"PubSub message:\n{msg}\n")
-       | Map(logging.info))
+    with beam.Pipeline(options=options) as p:
+        (
+            p
+            | "Read multiple PubSub sources" >> MultipleReadFromPubSub(sources)
+            | "Message" >> Map(lambda msg: f"PubSub message:\n{msg}\n")
+            | Map(logging.info)
+        )
 
 
 if __name__ == "__main__":
-  logging.getLogger().setLevel(logging.INFO)
-  run()
+    logging.getLogger().setLevel(logging.INFO)
+    run()

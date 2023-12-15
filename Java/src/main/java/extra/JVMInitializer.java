@@ -35,7 +35,13 @@ public class JVMInitializer {
         @Override
         public void onStartup() {
             LOG.info("Setting up Java VM Initializer");
-            System.setProperty("javax.net.debug", "ssl:verbose");
+
+            // Do not set verbose automatically
+            // System.setProperty("javax.net.debug", "ssl:verbose");
+
+            // Do not disable TLS verification automatically
+            // Security.setProperty("jdk.tls.disabledAlgorithms", "none");
+
         }
 
         @Override
