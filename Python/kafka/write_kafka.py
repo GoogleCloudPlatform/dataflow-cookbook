@@ -65,8 +65,10 @@ def run():
                     "bootstrap.servers": options.bootstrap_servers
                 },
                 topic=options.topic,
-                key_serializer="org.apache.kafka.common.serialization.LongSerializer",
-                value_serializer="org.apache.kafka.common.serialization.StringSerializer"
+                key_serializer=
+                    "org.apache.kafka.common.serialization.LongSerializer",
+                value_serializer=
+                    "org.apache.kafka.common.serialization.StringSerializer"
             )
         )
 
