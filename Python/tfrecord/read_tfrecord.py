@@ -12,9 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# standard libraries
 import logging
-import apache_beam as beam
 
+# third party libraries
+import apache_beam as beam
 from apache_beam import Map
 from apache_beam.io.tfrecordio import ReadFromTFRecord
 from apache_beam.options.pipeline_options import PipelineOptions
@@ -23,10 +25,12 @@ from apache_beam.options.pipeline_options import PipelineOptions
 class TFRecordOptions(PipelineOptions):
     @classmethod
     def _add_argparse_args(cls, parser):
+        # Add a command line flag to be parsed along
+        # with other normal PipelineOptions
         parser.add_argument(
-            '--file_pattern',
+            "--file_pattern",
             default="your-file-pattern",
-            help='A file glob pattern to read TFRecords from.'
+            help="A file glob pattern to read TFRecords from."
         )
 
 
@@ -39,14 +43,23 @@ def run():
 
     with beam.Pipeline(options=options) as p:
 
-        output = (p | "Read from TFRecord" >> ReadFromTFRecord(
-                        file_pattern=options.file_pattern
-                    )
-                    | "Map from bytes" >> Map(map_from_bytes)
-                    | "Log Data" >> Map(logging.info))
+        output = (
+            p
+            | "Read from TFRecord" >> ReadFromTFRecord(
+                file_pattern=options.file_pattern
+            )
+            | "Map from bytes" >> Map(map_from_bytes)
+            | "Log Data" >> Map(logging.info)
+        )
 
 
 def map_from_bytes(element):
+    """
+    Deserializes the input bytes using pickle library and
+    returns the reconstructed object.
+    By default TFRecordIO transforms use `coders.BytesCoder()`.
+    """
+    # third party libraries
     import pickle
 
     return pickle.loads(element)
