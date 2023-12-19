@@ -17,7 +17,7 @@ import logging
 
 # third party libraries
 import apache_beam as beam
-from apache_beam import Create, Map
+from apache_beam import Create
 from apache_beam.io.kafka import WriteToKafka
 from apache_beam.options.pipeline_options import PipelineOptions
 
@@ -65,10 +65,10 @@ def run():
                     "bootstrap.servers": options.bootstrap_servers
                 },
                 topic=options.topic,
-                key_serializer=
-                    "org.apache.kafka.common.serialization.LongSerializer",
-                value_serializer=
-                    "org.apache.kafka.common.serialization.StringSerializer"
+                key_serializer=("org.apache.kafka.common.serialization."
+                                "LongSerializer"),
+                value_serializer=("org.apache.kafka.common.serialization."
+                                  "StringSerializer")
             )
         )
 
