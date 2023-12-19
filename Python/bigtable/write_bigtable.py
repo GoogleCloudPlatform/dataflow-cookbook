@@ -92,9 +92,11 @@ def make_bigtable_row(element):
     direct_row = DirectRow(row_key=key)
     for column_id, value in enumerate(row_fields):
         direct_row.set_cell(
-            column_family_id, ("field%s" % column_id).encode("utf-8"),
+            column_family_id,
+            ("field%s" % column_id).encode("utf-8"),
             value,
-            datetime.now())
+            datetime.now()
+        )
     return direct_row
 
 
