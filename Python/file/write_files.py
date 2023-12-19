@@ -36,7 +36,7 @@ class FilesOptions(PipelineOptions):
 
 def run():
     """
-    This pipeline shows how to write write to a set of output files.
+    This pipeline shows how to write to a set of output files.
     """
 
     options = FilesOptions()
