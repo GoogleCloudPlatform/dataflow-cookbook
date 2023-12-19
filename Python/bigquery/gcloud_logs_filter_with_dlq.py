@@ -109,10 +109,8 @@ def run():
         (
             split_result[UNPROCESSED_TAG]
             | "Map to Row for DLQ" >> Map(to_row_for_dlq)
-            | "Write to DLQ" >> WriteToBigQuery(
-                options.dlq_table,
-                schema=dlq_table_schema
-           )
+            | "Write to DLQ"
+            >> WriteToBigQuery(options.dlq_table, schema=dlq_table_schema)
         )
 
 
@@ -144,9 +142,10 @@ def to_row_for_output(log):
 
     # Example transformation: Extract relevant information from the log
     payload = log.get("protopayload_auditlog")
-    message =
+    message = (
         f"Error occurred with resource {payload.get('resourceName')} "
         f"[{payload.get('methodName')}]"
+    )
     transformed_data = {
         "timestamp": log.get("timestamp"),
         "message": message,
