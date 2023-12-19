@@ -83,8 +83,8 @@ def run():
         output = (
             p
             | "Create" >> Create(elements)
-            | "Map to ExampleRow" >> Map(make_jdbc_row)
-                .with_output_types(ExampleRow)
+            | "Map to ExampleRow"
+            >> Map(make_jdbc_row).with_output_types(ExampleRow)
             | "Write to jdbc" >> WriteToJdbc(
                 table_name=options.table_name,
                 driver_class_name=options.driver_class_name,
