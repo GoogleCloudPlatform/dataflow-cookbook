@@ -78,8 +78,8 @@ def run():
         output = (
             p
             | "Create" >> Create(elements)
-            | "Map to Spanner Row" >> Map(make_spanner_row)
-                .with_output_types(ExampleRow)
+            | "Map to Spanner Row"
+            >> Map(make_spanner_row).with_output_types(ExampleRow)
             | "Write to Spanner" >> SpannerInsert(
                 project_id=options.project_id,
                 instance_id=options.instance_id,
