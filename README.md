@@ -64,6 +64,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *bigquery*
 
+- *kafka*
+
 - *pubsub*
 
 - *tfrecord*
