@@ -35,17 +35,17 @@ class SpannerOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--project_id",
-            default="your-project-id",
+            required=True,
             help="Google Cloud project ID"
         )
         parser.add_argument(
             "--instance_id",
-            default="your-instance-id",
+            required=True,
             help="Google Cloud Spanner instance ID"
         )
         parser.add_argument(
             "--database_id",
-            default="your-database-id",
+            required=True,
             help="Google Cloud Spanner database ID"
         )
 
