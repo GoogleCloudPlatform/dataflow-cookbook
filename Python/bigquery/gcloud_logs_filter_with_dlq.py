@@ -33,17 +33,17 @@ class BigQueryOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--input_table",
-            default="your-input-table",
+            required=True,
             help="Input Google Cloud BigQuery table"
         )
         parser.add_argument(
             "--output_table",
-            default="your-output-table",
+            required=True,
             help="Output Google Cloud BigQuery table"
         )
         parser.add_argument(
             "--dlq_table",
-            default="your-dlq-table",
+            required=True,
             help="Dead Letter Queue Google Cloud BigQuery table"
         )
 
