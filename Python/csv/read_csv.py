@@ -29,7 +29,7 @@ class CsvOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--file_path",
-            default="gs://your-bucket/your-file.csv",
+            required=True,
             help="Csv file path"
         )
 

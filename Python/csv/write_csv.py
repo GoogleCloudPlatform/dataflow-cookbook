@@ -29,7 +29,7 @@ class CsvOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--file_path",
-            default="gs://quick_test_dataflow/test-names.csv",
+            required=True,
             help="Csv file path"
         )
 
