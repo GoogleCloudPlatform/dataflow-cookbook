@@ -34,12 +34,12 @@ class BigtableOptions(PipelineOptions):
         )
         parser.add_argument(
             "--instance_id",
-            default="beam-test",
+            required=True,
             help="Cloud Bigtable instance ID"
         )
         parser.add_argument(
             "--table_id",
-            default="your-test-table",
+            required=True,
             help="Cloud Bigtable table ID"
         )
 
