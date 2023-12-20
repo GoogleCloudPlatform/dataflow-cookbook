@@ -14,7 +14,6 @@
 
 # standard libraries
 import logging
-import typing
 from typing import NamedTuple
 
 # third party libraries
@@ -37,27 +36,28 @@ class JdbcOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--table_name",
-            default="your-table-name",
+            required=True,
             help="Table name"
         )
         parser.add_argument(
             "--jdbc_url",
-            default="jdbc:postgresql://localhost:5432/template1",
+            required=True,
             help="JDBC URL"
         )
         parser.add_argument(
             "--driver_class_name",
+            required=True,
             default="org.postgresql.Driver",
             help="Driver class name"
         )
         parser.add_argument(
             "--username",
-            default="postgres",
+            required=True,
             help="Username"
         )
         parser.add_argument(
             "--password",
-            default="postgres",
+            required=True,
             help="Password"
         )
 
