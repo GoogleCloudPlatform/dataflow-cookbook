@@ -34,12 +34,12 @@ class MongoDBOptions(PipelineOptions):
         )
         parser.add_argument(
             "--db_name",
-            default="your-db-name",
+            required=True,
             help="The MongoDB database name"
         )
         parser.add_argument(
             "--collection",
-            default="your-coll-name",
+            required=True,
             help="The MongoDB collection name"
         )
 
