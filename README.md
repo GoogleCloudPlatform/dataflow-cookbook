@@ -60,6 +60,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *csv*
 
+- *file*
+
 - *gcs*
 
 - *json*
@@ -93,8 +95,6 @@ The cookbook contains examples for Java, Python and Scala.
 - *gcs*
 
 - *bigquery*
-
-- *file*
 
 - *pubsub*
 
