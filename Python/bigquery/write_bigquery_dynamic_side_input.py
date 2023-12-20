@@ -31,12 +31,12 @@ class BigQueryOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--users_table",
-            default="your-users-table",
+            required=True,
             help="Google Cloud BigQuery table to store users"
         )
         parser.add_argument(
             "--countries_table",
-            default="your-countries-table",
+            required=True,
             help="Google Cloud BigQuery table to store countries"
         )
 
