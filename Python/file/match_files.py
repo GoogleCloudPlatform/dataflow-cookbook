@@ -29,7 +29,7 @@ class FilesOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--file_pattern",
-            default="your-file-pattern",
+            required=True,
             help="File pattern"
         )
 

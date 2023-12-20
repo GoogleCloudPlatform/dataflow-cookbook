@@ -29,7 +29,7 @@ class FilesOptions(PipelineOptions):
         # with other normal PipelineOptions
         parser.add_argument(
             "--path",
-            default="your-path",
+            required=True,
             help="The directory to write files into."
         )
 
