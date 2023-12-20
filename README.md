@@ -66,6 +66,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *kafka*
 
+- *mongodb*
+
 - *pubsub*
 
 - *tfrecord*
@@ -89,8 +91,6 @@ The cookbook contains examples for Java, Python and Scala.
 - *gcs*
 
 - *bigquery*
-
-- *mongodb*
 
 - *pubsub*
 
