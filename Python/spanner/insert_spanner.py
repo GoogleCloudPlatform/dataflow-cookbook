@@ -57,7 +57,8 @@ class SpannerOptions(PipelineOptions):
 
 def run():
     """
-    This pipeline shows how to write to Google Cloud Spanner.
+    This pipeline shows how to write insert mutations to the Google Cloud
+    Spanner table.
     """
 
     options = SpannerOptions()
@@ -80,7 +81,7 @@ def run():
             | "Create" >> Create(elements)
             | "Map to Spanner Row"
             >> Map(make_spanner_row).with_output_types(ExampleRow)
-            | "Write to Spanner" >> SpannerInsert(
+            | "Spanner Insert" >> SpannerInsert(
                 project_id=options.project_id,
                 instance_id=options.instance_id,
                 database_id=options.database_id,
