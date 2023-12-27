@@ -62,6 +62,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *gcs*
 
+- *jdbc*
+
 - *json*
 
 - *bigquery*
