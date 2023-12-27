@@ -46,7 +46,7 @@ class JdbcOptions(PipelineOptions):
         )
         parser.add_argument(
             "--driver_class_name",
-            required=True,
+            required=False,
             default="org.postgresql.Driver",
             help="Driver class name"
         )
