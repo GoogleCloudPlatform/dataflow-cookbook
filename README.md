@@ -68,6 +68,8 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *json*
 
+- *bigtable*
+
 - *bigquery*
 
 - *kafka*
