@@ -33,8 +33,6 @@ import org.apache.beam.sdk.transforms.windowing.GlobalWindow;
 import org.apache.beam.sdk.values.KV;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.joda.time.Instant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.util.stream.IntStream;
@@ -52,8 +50,9 @@ public class WriteBigTable {
     $ cbt createfamily my-table not-prime
      */
 
-    private static final Logger LOG = LoggerFactory.getLogger(WriteBigTable.class);
-
+    /**
+     * Pipeline options to be passed via the command line.
+     */
     public interface WriteBigTableOptions extends DataflowPipelineOptions {
         @Description("Instance ID")
         @Default.String("quickstart-instance")
@@ -74,6 +73,38 @@ public class WriteBigTable {
         void setProjectBT(String value);
     }
 
+    public static void main(String[] args) {
+
+        // Parse pipeline options from the command line.
+        WriteBigTableOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(WriteBigTableOptions.class);
+
+        // Use Dataflow project if ProjectBT pipeline option is not passed.
+        String project = (options.getProjectBT() == null) ? options.getProject() : options.getProjectBT();
+
+        // Create the pipeline.
+        Pipeline p = Pipeline.create(options);
+
+        int[] rangeIntegers = IntStream.range(0, 100).toArray();
+        Iterable<Integer> elements = Ints.asList(rangeIntegers);
+
+        p
+                // Add a source that uses the hard-coded values (integers from 0 to 99).
+                .apply(Create.of(elements))
+                // Add the CreateMutations transform that groups the values into bundles
+                // of Bigtable "mutations".
+                .apply("Group in Mutations", ParDo.of(new CreateMutations()))
+                // The Bigtable sink takes as input a PCollection<KV<ByteString, Iterable<Mutation>>>,
+                // where the ByteString is the key of the row being mutated, and each Mutation
+                // represents an idempotent transformation to that row.
+                .apply(BigtableIO.write()
+                        .withInstanceId(options.getInstance())
+                        .withProjectId(project)
+                        .withTableId(options.getTable()));
+
+        // Execute the pipeline.
+        p.run();
+    }
+
     public static class CreateMutations extends DoFn<Integer, KV<ByteString, Iterable<Mutation>>> {
         public ImmutableList.Builder<Mutation> mutations;
 
@@ -83,12 +114,12 @@ public class WriteBigTable {
             String isPrime = b.isProbablePrime(1) ? "prime" : "not-prime";
 
             Mutation.SetCell setCell =
-                    Mutation.SetCell.newBuilder()
-                            .setFamilyName(isPrime)
-                            .setColumnQualifier(toByteString(c.element().toString()))
-                            .setValue(toByteString("value-" + c.element()))
-                            .setTimestampMicros(Instant.now().getMillis() * 1000)
-                            .build();
+                Mutation.SetCell.newBuilder()
+                    .setFamilyName(isPrime)
+                    .setColumnQualifier(toByteString(c.element().toString()))
+                    .setValue(toByteString("value-" + c.element()))
+                    .setTimestampMicros(Instant.now().getMillis() * 1000)
+                    .build();
             this.mutations.add(Mutation.newBuilder().setSetCell(setCell).build());
         }
 
@@ -99,7 +130,6 @@ public class WriteBigTable {
 
         @FinishBundle
         public void finishBundle(FinishBundleContext c) {
-
             KV<ByteString, Iterable<Mutation>> row = KV.of(toByteString("numbers"), this.mutations.build());
             c.output(row, Instant.now(), GlobalWindow.INSTANCE);
         }
@@ -107,28 +137,5 @@ public class WriteBigTable {
         private static ByteString toByteString(String value) {
             return ByteString.copyFromUtf8(value);
         }
-    }
-
-    public static void main(String[] args) {
-        WriteBigTableOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(WriteBigTableOptions.class);
-
-        // Use Dataflow project if ProjectBT not passed
-        String project = (options.getProjectBT() == null) ? options.getProject() : options.getProjectBT();
-
-        Pipeline p = Pipeline.create(options);
-
-        int[] rangeIntegers = IntStream.range(0, 100).toArray();
-        Iterable<Integer> elements = Ints.asList(rangeIntegers);
-
-        p
-                .apply(Create.of(elements))
-                .apply("Group in Mutations", ParDo.of(new CreateMutations()))
-                .apply(BigtableIO.write()
-                        .withInstanceId(options.getInstance())
-                        .withProjectId(project)
-                        .withTableId(options.getTable())
-                );
-
-        p.run();
     }
 }

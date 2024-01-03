@@ -31,6 +31,8 @@ public class ReadQueryBQ {
     private static final Logger LOG = LoggerFactory.getLogger(ReadQueryBQ.class);
 
     public static void main(String[] args) {
+
+        // Parse pipeline options from the command line.
         PipelineOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(PipelineOptions.class);
 
         String sql = "SELECT " +
@@ -38,10 +40,13 @@ public class ReadQueryBQ {
                 "FROM `bigquery-public-data.baseball.schedules` " +
                 "GROUP BY 1, 2";
 
+        // Construct the pipeline.
         Pipeline p = Pipeline.create(options);
 
         p
+                // Add a source that reads the query results from BigQuery.
                 .apply(BigQueryIO.readTableRows().fromQuery(sql).usingStandardSql())
+                // Add a transform that filters elements by attendance and prints the results.
                 .apply("Access TableRow", ParDo.of(new DoFn<TableRow, String>() {
                     @ProcessElement
                     public void processElement(ProcessContext c) {
@@ -58,6 +63,7 @@ public class ReadQueryBQ {
                     }
                 }));
 
+        // Execute the pipeline.
         p.run();
     }
 }
