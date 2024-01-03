@@ -15,6 +15,7 @@
  */
 
 package pubsub;
+
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubMessage;
@@ -37,6 +38,9 @@ public class WriteWithAttributesPubSub {
 
     private static final Logger LOG = LoggerFactory.getLogger(WriteWithAttributesPubSub.class);
 
+    /**
+     * Pipeline options to be passed via the command line.
+     */
     public interface WriteWithAttributesPubSubOptions extends PipelineOptions {
         @Description("Topic to write to")
         String getTopic();
@@ -46,10 +50,11 @@ public class WriteWithAttributesPubSub {
 
     public static void main(String[] args) {
 
+        // Parse pipeline options from the command line.
         WriteWithAttributesPubSubOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(WriteWithAttributesPubSubOptions.class);
 
-        Pipeline p = Pipeline.create(options);
-
+        // The pipeline will write the following hard-coded records.
+        // This is going to be a batch pipeline but writing in Streaming works the same.
         final List<String> elements = Arrays.asList(
                 //Name, Product, Epoch time millis
                 "Robert, TV, 1613141590000",
@@ -58,8 +63,13 @@ public class WriteWithAttributesPubSub {
                 "Rebeca, Videogame, 1610000000000"
         );
 
+        // Create the pipeline.
+        Pipeline p = Pipeline.create(options);
+
         p
+                // Add a source that uses the hard-coded records.
                 .apply(Create.of(elements))
+                // Add a transform that converts string into Pub/Sub messages with attributes.
                 .apply("to PubSubMessage", ParDo.of(new DoFn<String, PubsubMessage>() {
                     @ProcessElement
                     public void processElement(ProcessContext c) {
@@ -74,11 +84,10 @@ public class WriteWithAttributesPubSub {
                         c.output(message);
                     }
                 }))
-                .apply(PubsubIO.writeMessages().to(options.getTopic())); // Writing in Streaming works the same
+                // Add a sink that writes messages to Pub/Sub.
+                .apply(PubsubIO.writeMessages().to(options.getTopic()));
 
+        // Execute the pipeline.
         p.run();
     }
 }
-
-
-

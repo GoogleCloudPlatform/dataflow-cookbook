@@ -45,10 +45,10 @@ public class WriteBQ {
 
     public static void main(String[] args) {
 
+        // Parse pipeline options from the command line.
         WriteBQOptions options = PipelineOptionsFactory.fromArgs(args).withValidation().as(WriteBQOptions.class);
 
-        Pipeline p = Pipeline.create(options);
-
+        // The pipeline will write the following hard-coded records.
         final List<String> elements = Arrays.asList(
                 "John, 1990, USA",
                 "Charles, 1995, USA",
@@ -59,15 +59,21 @@ public class WriteBQ {
                 "Eliza, 2000, Japan"
         );
 
+        // Create the target table schema.
+        // If the table doesn't already exist, it will be created using this schema automatically.
         List<TableFieldSchema> fields = new ArrayList<>();
         fields.add(new TableFieldSchema().setName("name").setType("STRING"));
         fields.add(new TableFieldSchema().setName("year").setType("INTEGER"));
         fields.add(new TableFieldSchema().setName("country").setType("STRING"));
         TableSchema schema = new TableSchema().setFields(fields);
 
+        // Create the pipeline.
+        Pipeline p = Pipeline.create(options);
+
         p
+                // Add a source that uses the hard-coded records.
                 .apply(Create.of(elements))
-                //Convert to TableRow
+                // Add a transform that converts the records (comma-separated strings) to TableRow.
                 .apply("to TableRow", ParDo.of(new DoFn<String, TableRow>() {
                     @ProcessElement
                     public void processElement(ProcessContext c) {
@@ -82,14 +88,16 @@ public class WriteBQ {
                         c.output(row);
                     }
                 }))
-                // to BigQuery
-                // Using `writeTableRows` is slightly less performant than using write with `WithFormatFunction`
-                // due to the TableRow encoding. See `WriteWithFormatBQ` for an example.
-                .apply(BigQueryIO.writeTableRows() // Input type from prev stage is Row
+                // Writing to BigQuery using `writeTableRows` is slightly less performant than using
+                // write with `WithFormatFunction` due to the TableRow encoding.
+                // See `WriteWithFormatBQ` for an example.
+                .apply(BigQueryIO.writeTableRows() // Input type from prev stage is TableRow
                         .withSchema(schema)
                         .to(options.getTable())
                         .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
                         .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND));
+
+        // Execute the pipeline.
         p.run();
     }
 }
