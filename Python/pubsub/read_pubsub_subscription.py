@@ -28,14 +28,17 @@ def run():
     class ReadPubSubOptions(PipelineOptions):
         @classmethod
         def _add_argparse_args(cls, parser):
+            # Add a required flag to allow inputting a subscription from
+            # the command line
             parser.add_argument(
                 "--subscription",
                 required=True,
                 help="PubSub subscription to read.",
             )
-
+    # Create an instance of our custom options class
     options = ReadPubSubOptions(streaming=True)
 
+    # Read from the input PubSub subscription and log the output
     with beam.Pipeline(options=options) as p:
         (
             p
@@ -48,5 +51,4 @@ def run():
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(logging.INFO)
-    logging.info("Exit with Ctrl+C.")
     run()
