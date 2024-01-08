@@ -61,6 +61,7 @@ public class MatchAllFileIOStreaming {
                 .apply("Validate GCS", ParDo.of(new DoFn<String, String>() {
                     @ProcessElement
                     public void processElement(ProcessContext c) {
+                        // We filter out any non-GCS paths
                         Pattern p = Pattern.compile("gs://.*/.*");
 
                         if (p.matcher(c.element()).matches()) {
@@ -76,6 +77,7 @@ public class MatchAllFileIOStreaming {
                 .apply(Window.<String>into(
                         FixedWindows.of(Duration.standardMinutes(windowLength)))
                         .withAllowedLateness(Duration.standardMinutes(windowLength))
+                        .triggering(Repeatedly.forever(AfterProcessingTime.pastFirstElementInPane()))
                         .discardingFiredPanes()) // Since streaming, we need a window
                 .apply(Combine.globally(Count.<String>combineFn()).withoutDefaults())  // Count lines in the window
                 .apply("Log Count", ParDo.of(new DoFn<Long, Long>() {
