@@ -47,7 +47,7 @@
     <nemo.version>0.1</nemo.version>
     <flink.artifact.name>beam-runners-flink-1.10</flink.artifact.name>
 
-    <avro.version>1.10.0</avro.version>
+    <avro.version>1.11.3</avro.version>
     <json.version>20231013</json.version>
     <google-auto-service.version>1.0-rc7</google-auto-service.version>
 
