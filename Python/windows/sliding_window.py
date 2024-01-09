@@ -23,10 +23,10 @@ from apache_beam import (  # noqa:E501
     ParDo,
     Pipeline,
     WindowInto,
-    window,
 )
 from apache_beam.io.gcp.pubsub import ReadFromPubSub
 from apache_beam.options.pipeline_options import PipelineOptions
+from apache_beam.transforms.window import SlidingWindows
 
 INPUT_TOPIC = "projects/pubsub-public-data/topics/taxirides-realtime"
 
@@ -34,7 +34,7 @@ INPUT_TOPIC = "projects/pubsub-public-data/topics/taxirides-realtime"
 class ParseMessages(DoFn):
     """
     The input messages are based on key-value pairs
-    ('ride_status': 'passenger_count').
+    {'ride_status': str, 'passenger_count': int}.
     Parse data 'ride_status' and 'passenger_count' from messages
     """
 
@@ -62,7 +62,7 @@ def run(argv=None):
         def _add_argparse_args(cls, parser):
             parser.add_argument(
                 "--input_topic",
-                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<ToPIC>."',  # noqa:E501
+                help='Input PubSub topic of the form "projects/<PROJECT>/topics/<TOPIC>."',  # noqa:E501
                 default=INPUT_TOPIC,
             )
 
@@ -76,11 +76,12 @@ def run(argv=None):
             | "ParseMessages" >> ParDo(ParseMessages())
             # Apply Sliding Window of length 30 seconds and
             # new window every 5 seconds
-            | "ApplySlidingWindow" >> WindowInto(window.SlidingWindows(30, 5))
+            | "ApplySlidingWindow" >> WindowInto(SlidingWindows(30, 5))
             | "SumPerKey" >> CombinePerKey(sum)
             | "LogOutputs" >> ParDo(WriteOutputs())
         )
 
 
 if __name__ == "__main__":
+    logging.getLogger().setLevel(logging.INFO)
     run()
