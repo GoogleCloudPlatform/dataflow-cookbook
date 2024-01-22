@@ -29,7 +29,7 @@ The cookbook contains examples for Java, Python and Scala.
 
 - *pubsublite*
 
-- *sql*: pipelines that use BeamSQL
+- *sql*: pipelines that use Beam SQL
 
 - *cloudsql*
 
@@ -92,7 +92,7 @@ The cookbook contains examples for Java, Python and Scala.
 - *advanced*: pipelines with not so usual use cases, such as Timely and Stateful
   DoFn examples
 
-- *extra_examples*: what could not fit in the other section.
+- *extra_examples*: what could not fit in the other sections.
 
 ### Scala / Scio
 
@@ -111,7 +111,7 @@ The cookbook contains examples for Java, Python and Scala.
 - *advanced*: pipelines with not so usual use cases, such as Timely and Stateful
   DoFn examples
 
-- *extra*: what could not fit in the other section.
+- *extra*: what could not fit in the other sections.
 
 ## Setting up the environment
 
@@ -177,7 +177,7 @@ pipeline options class.
 
 NOTE: If you want to name the pipeline, add `--job_name=my-pipeline-name`.
 
-### Scala / SCio
+### Scala / Scio
 
 To launch the dataflow jobs run in your terminal (using `basics/GroupByKey` as
 example):

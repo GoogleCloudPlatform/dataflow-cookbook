@@ -94,6 +94,8 @@ public class WriteBQ {
                 .apply(BigQueryIO.writeTableRows() // Input type from prev stage is TableRow
                         .withSchema(schema)
                         .to(options.getTable())
+                        .withMethod(BigQueryIO.Write.Method.FILE_LOADS)
+                        .withNumFileShards(1000)
                         .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
                         .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND));
 
