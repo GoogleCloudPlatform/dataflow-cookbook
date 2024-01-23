@@ -1,4 +1,4 @@
-# Prompts (01-22-2024)
+# Prompts (01-23-2024)
 
 |Prompt|Path|
 |---|---|
@@ -40,4 +40,17 @@
 |Write a python pipeline using Apache Beam that prints the numbers from 0 to 9.|Python/minimal/create.py|
 |Write a python code using Apache Beam that groups elements by their keys from two PCollections.|Python/basics/co_group_by_key.py|
 |Write a python code using Apache Beam that groups elements by their keys and log the output.|Python/basics/group_by_key.py|
-|||
+|Write an Apache Beam Java Pipeline to execute a query in BigQuery, read the records, filter and transform them, and output the results.|Java/src/main/java/bigquery/ReadQueryBQ.java|
+|Write an Apache Beam Java Pipeline that writes string messages to Pub/Sub.|Java/src/main/java/pubsub/WriteStringPubSub.java|
+|Write an Apache Beam Java Pipeline that writes records to a BigQuery table.|Java/src/main/java/bigquery/WriteBQ.java|
+|Write an Apache Beam Java Pipeline that writes integers to Bigtable splitting them into "prime" and "not-prime" Bigtable families depending on whether one is a prime number.|Java/src/main/java/bigtable/WriteBigTable.java|
+|Write an Apache Beam Java Pipeline that writes messages with attributes to Pub/Sub.|Java/src/main/java/pubsub/WriteWithAttributesPubSub.java|
+|Write a Beam SQL pipeline to read a table from BigQuery, apply a SQL query and write the result back to BigQuery.|Java/src/main/java/sql/BigQuerySQL.java|
+|Write a Beam SQL streaming pipeline in Java to read data from Pub/Sub and involve windowing features.|Java/src/main/java/sql/WindowingSQL.java|
+|Write an Apache Beam pipeline to print the list of available SSL ciphers.|Java/src/main/java/extra/SSLCiphers.java|
+|Write a Beam pipeline to read a table from BigQuery with Storage API then filter the rows by date and parent_tag and select only some fields.|Java/src/main/java/bigquery/ReadStorageAPIBQ.java|
+|Write an Apache Beam pipeline to read a table from BigQuery, modify a nested field and write the results back to BigQuery.|Python/bigquery/repeated_bigquery.py|
+|Write a Apache Beam pipeline that reads data from a TestStream. Add four elements at timestamps 0, 4, 6 and 5. Then advance the watermark to 9 and advance the processing time to 9. Then add an element at timestamp 0. Then advance the watermark to 11 and processing time to 3. Add an element at timestamp 9, advance the watermark to 15 and processing time to 4. Add elements at timestamp 9 and timestamp 11. Finally advance the watermark to infinity. Assign elements within the same pane with the same key, windows into FixedWindows with allowed lateness, groups together elements within same pane and key, and formats the elements. Use a fixed window with allowed lateness and a discarding accumulation mode.|Python/testing_windows/late_data.py|
+|Write a Apache Beam pipeline that reads from a Pub/Sub topic, that attempts to assign windows based on the element’s content, and then samples the output on a fixed size per key basis; fails to emit elements and does not perform null checks|Java/src/main/java/advanced/CustomWindows.java|
+|Write an Apache Beam pipeline to read data from Bigtable. Also output as comments how to provision minimally required dependent resources and submit as a Dataflow Job.|Java/src/main/java/bigtable/ReadBigTable.java|
+|Write a Beam pipeline with intent to read  from Pub/Sub and write to BigQuery that raises “TypeError: expected string or buffer”. |Python/bigquery/failed_rows_bigquery.py|
