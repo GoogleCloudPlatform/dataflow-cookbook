@@ -21,8 +21,11 @@ from apache_beam import Create
 
 
 def run(argv=None):
+    # Use range(10) to generate a list of numbers up to 10.
+    # Create a PCollection with beam.Create and finally
+    # use the print function in beam.Map to print them.
     with beam.Pipeline() as p:
-        p | Create(range(10))
+        p | Create(range(10)) | beam.Map(print)
 
 
 if __name__ == "__main__":
