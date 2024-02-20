@@ -422,6 +422,13 @@
       <version>1.2.1</version>
     </dependency>
 
+    <!-- Adds a dependency for the JDBC. -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.7.1</version>
+    </dependency>
+
     <!-- Add slf4j API frontend binding with JUL backend -->
     <dependency>
       <groupId>org.slf4j</groupId>
