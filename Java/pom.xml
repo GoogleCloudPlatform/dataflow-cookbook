@@ -542,6 +542,41 @@
       <artifactId>beam-sdks-java-io-jdbc</artifactId>
     </dependency>
 
+    <!-- https://mvnrepository.com/artifact/org.apache.beam/beam-sdks-java-io-mongodb -->
+    <dependency>
+      <groupId>org.apache.beam</groupId>
+      <artifactId>beam-sdks-java-io-mongodb</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mongodb</groupId>
+      <artifactId>mongo-java-driver</artifactId>
+      <version>3.12.11</version>
+      <scope>compile</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.checkerframework</groupId>
+          <artifactId>jdk8</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava-jdk5</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jdk.tools</groupId>
+          <artifactId>jdk.tools</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.protobuf</groupId>
+          <artifactId>protobuf-lite</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.hamcrest</groupId>
+          <artifactId>hamcrest-all</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
     <!-- https://mvnrepository.com/artifact/com.google.cloud.sql/mysql-socket-factory-connector-j-8 -->
     <dependency>
       <groupId>com.google.cloud.sql</groupId>
