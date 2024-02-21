@@ -415,11 +415,21 @@
       <version>${joda.version}</version>
     </dependency>
 
-    <!-- Adds a dependency on the Hadoop Core module. -->
+    <!-- Adds a dependency on the Hadoop Client module. -->
     <dependency>
       <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-core</artifactId>
-      <version>1.2.1</version>
+      <artifactId>hadoop-client</artifactId>
+      <version>${hadoop.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-log4j12</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-jdk14</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Adds a dependency for the JDBC. -->
