@@ -38,6 +38,12 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Pipeline for writing data to Google Cloud BigQuery using Avro serialization. The pipeline creates
+ * an output table in BigQuery and writes {@code ExampleRecord} instances to it. The AvroWriter
+ * configuration in the pipeline applies a custom format function with a modified write behavior
+ * that involves appending a suffix to string values before writing to BigQuery.
+ */
 public class WriteWithAvroWriterBQ {
 
     /** Represents an Example BigQuery record. */
