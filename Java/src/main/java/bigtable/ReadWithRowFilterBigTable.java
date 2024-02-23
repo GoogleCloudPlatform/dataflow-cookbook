@@ -40,6 +40,13 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Pipeline for reading data from Google Cloud Bigtable with row filtering and key range
+ * specification. The pipeline uses the {@code BigtableIO.read()} transform to read rows from a
+ * specified table in a Cloud Bigtable instance, applying a custom row filter based on a regular
+ * expression to selectively exclude rows. The {@code withKeyRange()} method is used to limit the
+ * scope of keys read from the Cloud Bigtable table, allowing for more targeted data retrieval.
+ */
 public class ReadWithRowFilterBigTable {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReadWithRowFilterBigTable.class);
