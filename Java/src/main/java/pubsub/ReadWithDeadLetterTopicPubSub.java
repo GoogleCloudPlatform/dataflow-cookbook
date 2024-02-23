@@ -27,6 +27,12 @@ import org.apache.beam.sdk.values.TypeDescriptors;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Pipeline for reading messages from Google Cloud Pub/Sub, incorporating error handling through a
+ * dead-letter topic. The pipeline uses the {@code PubsubIO.readStrings()} transform to read
+ * messages from a specified subscription, and any parsing errors are captured and redirected to a
+ * dead-letter topic.
+ */
 public class ReadWithDeadLetterTopicPubSub {
 
     public static final String ID_EXAMPLE_SUFFIX = "id=";
