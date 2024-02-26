@@ -81,7 +81,7 @@ public class ReadWithBadRecordErrorHandlerKafka {
         p.apply(
                 "Read from Kafka",
                 KafkaIO.<String, String>read()
-                     .withBootstrapServers(options.getBootstrapServers())
+                    .withBootstrapServers(options.getBootstrapServers())
                     .withTopic(options.getTopic())
                     .withKeyDeserializer(ExampleDeserializer.class)
                     .withValueDeserializer(ExampleDeserializer.class)
@@ -99,7 +99,6 @@ public class ReadWithBadRecordErrorHandlerKafka {
                             c.output(c.element());
                         }
                     }));
-
         p.run();
     }
 
