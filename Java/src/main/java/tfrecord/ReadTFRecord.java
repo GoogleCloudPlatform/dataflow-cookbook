@@ -28,6 +28,9 @@ import org.apache.beam.vendor.guava.v32_1_2_jre.com.google.common.base.Charsets;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Pipeline for reading data from TFRecord files using the {@code TFRecordIO.read()} transform.
+ */
 public class ReadTFRecord {
 
     private static final Logger LOG =

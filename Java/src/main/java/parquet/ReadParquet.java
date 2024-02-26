@@ -32,6 +32,9 @@ import org.apache.beam.sdk.transforms.ParDo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Pipeline for reading data from Parquet files using the{@code ParquetIO.read()} transform.
+ */
 public class ReadParquet {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReadParquet.class);

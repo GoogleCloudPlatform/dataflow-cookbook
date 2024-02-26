@@ -28,6 +28,9 @@ import org.bson.Document;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Pipeline for writing data to MongoDB using the {@code MongoDbIO.write()} transform.
+ */
 public class WriteMongoDB {
 
     private static final String ID_COLUMN = "id";

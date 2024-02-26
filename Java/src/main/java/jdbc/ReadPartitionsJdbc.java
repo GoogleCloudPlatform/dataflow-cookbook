@@ -31,6 +31,12 @@ import java.io.Serializable;
 import java.sql.ResultSet;
 import java.util.Objects;
 
+/**
+ * Pipeline for reading data from a JDBC source with partitioning. The pipeline reads records from a
+ * specified table using the {@code JdbcIO.readWithPartitions()} transform, which partitions the
+ * table based on the specified number of partitions, the partition column, and the lower and upper
+ * bounds for the partitioning.
+ */
 public class ReadPartitionsJdbc {
 
   private static final Logger LOG = LoggerFactory.getLogger(ReadPartitionsJdbc.class);

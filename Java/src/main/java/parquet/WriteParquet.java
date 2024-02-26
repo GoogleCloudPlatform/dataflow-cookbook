@@ -34,6 +34,9 @@ import org.apache.beam.sdk.transforms.Create;
 import org.apache.beam.sdk.transforms.MapElements;
 import org.apache.beam.sdk.transforms.SimpleFunction;
 
+/**
+ * Pipeline for writing data to Parquet files using the {@code ParquetIO.sink()} sink.
+ */
 public class WriteParquet {
 
     /** Represents an Example Parquet record. */

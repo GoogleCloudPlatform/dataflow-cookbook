@@ -28,6 +28,11 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The pipeline uses the {@code JdbcIO.write()} transform to insert {@code ExampleRow} instances
+ * into a specified JDBC table using {@code PreparedStatementSetter} to map {@code ExampleRow}
+ * fields to the SQL statement parameters.
+ */
 public class WriteJdbc {
 
     /**
