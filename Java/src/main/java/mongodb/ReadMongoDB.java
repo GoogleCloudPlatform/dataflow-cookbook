@@ -28,6 +28,9 @@ import org.bson.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Pipeline for reading data from MongoDB using the {@code MongoDbIO.read()} transform.
+ */
 public class ReadMongoDB {
 
     private static final Logger LOG =

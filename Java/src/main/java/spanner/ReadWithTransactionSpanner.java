@@ -33,6 +33,11 @@ import org.apache.beam.sdk.values.PCollectionView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Pipeline for reading data from Google Cloud Spanner with transactional consistency. The pipeline
+ * retrieves records from a specified Spanner table, using a high-priority transaction bound to the
+ * strong timestamp consistency mode.
+ */
 public class ReadWithTransactionSpanner {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReadWithTransactionSpanner.class);

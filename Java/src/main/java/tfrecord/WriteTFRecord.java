@@ -30,6 +30,9 @@ import org.apache.beam.vendor.guava.v32_1_2_jre.com.google.common.base.Charsets;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Pipeline for writing data to TFRecord files using the {@code TFRecordIO.write()} transform.
+ */
 public class WriteTFRecord {
 
     /**
