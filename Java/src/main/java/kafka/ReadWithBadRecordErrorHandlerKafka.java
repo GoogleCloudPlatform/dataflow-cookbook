@@ -33,9 +33,6 @@ import org.apache.beam.sdk.values.PCollection;
 import org.apache.beam.vendor.guava.v32_1_2_jre.com.google.common.base.Charsets;
 import org.apache.kafka.common.errors.SerializationException;
 import org.apache.kafka.common.serialization.Deserializer;
-import org.checkerframework.checker.initialization.qual.Initialized;
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.UnknownKeyFor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,10 +105,8 @@ public class ReadWithBadRecordErrorHandlerKafka {
      * BadRecord} instances in the input {@link PCollection}.
      */
     public static class ErrorSinkTransform extends PTransform<PCollection<BadRecord>, PCollection<Long>> {
-        
-        @UnknownKeyFor
-        @NonNull
-        @Initialized
+
+        @Override
         public PCollection<Long> expand(PCollection<BadRecord> input) {
             return input.apply("Combine", Combine.globally(Count.combineFn()));
         }
