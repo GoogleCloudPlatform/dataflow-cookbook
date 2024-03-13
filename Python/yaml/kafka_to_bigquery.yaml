@@ -28,12 +28,12 @@ pipeline:
         language: python
         fields:
           message:
-            callable: "lambda row: row.payload.decode('utf-8')"
+            callable: "lambda row: str(row.payload.decode('utf-8'))"
 
   sink:
     type: WriteToBigQuery
     config:
-      table: project-id.dataset-id.tabe-id
+      table: project-id.dataset-id.table-id
       create_disposition: CREATE_IF_NEEDED
       write_disposition: WRITE_APPEND
     windowing:
