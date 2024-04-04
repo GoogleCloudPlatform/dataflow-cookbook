@@ -20,6 +20,20 @@ pipeline:
     config:
       table: project-id.dataset-id.table-id
 
+  transforms:
+    - type: Filter
+      config:
+        language: python
+        keep: "id > 2"
+    - type: MapToFields
+      config:
+        language: python
+        fields:
+          id:
+            callable: "lambda row: row.id"
+          name:
+            callable: "lambda row: row.name.upper()"
+
   sink:
     type: WriteToKafka
     config:
